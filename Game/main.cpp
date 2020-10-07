@@ -1,23 +1,31 @@
 #include <SFML\Graphics.hpp>
 #include <iostream>
 #include "player.h"
+#include "platform.h"
 
-static const float VIEW_HEIGHT = 650.0f;
+static float viewheight = 800.0f;
 
 void resizeView(const sf::RenderWindow& window, sf::View& view)
 {
 	float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
-	view.setSize(VIEW_HEIGHT * aspectRatio, VIEW_HEIGHT);
+	view.setSize(viewheight * aspectRatio, viewheight);
 }
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(512, 512), "Jack!", sf::Style::Close | sf::Style::Resize);
-	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
+	sf::RenderWindow window(sf::VideoMode(1200, 800), "Jack!", sf::Style::Close | sf::Style::Resize);
+	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(viewheight + 400, viewheight));
 	sf::Texture playerTexture;
 	playerTexture.loadFromFile("test.png");
+	sf::Texture obj1Texture;
+	obj1Texture.loadFromFile("test_obj1.png");
+	sf::Texture obj2Texture;
+	obj2Texture.loadFromFile("test_obj2.png");
 
-	player player(&playerTexture, sf::Vector2u(8, 6), 0.15f, 196.0f);
+	player player(&playerTexture, sf::Vector2u(8, 8), 0.12f, 200.0f);
+
+	platform platform1(&obj1Texture, sf::Vector2f(50.0f, 50.0f), sf::Vector2f(-100.0f, 15.0f));
+	platform platform2(&obj2Texture, sf::Vector2f(80.0f, 80.0f), sf::Vector2f(-200.0f, 0.0f));
 		
 	float deltaTime = 0.0f;
 	sf::Clock clock;
@@ -41,11 +49,20 @@ int main()
 		}
 
 		player.Update(deltaTime);
-		//view.setCenter(player.getPosition());
-
-		window.clear(sf::Color(110, 150, 150));
+		
+		collider playerCollision = player.getCollider();
+		collider platform1Collision = platform1.getCollider();
+		platform1.getCollider().checkCollider(playerCollision, 0.0f);
+		platform2.getCollider().checkCollider(playerCollision, 1.0f);
+		platform2.getCollider().checkCollider(platform1Collision, 0.0f);
+		
+		view.setCenter(player.getPosition());
+		
+		window.clear(sf::Color(255, 170, 77));
 		window.setView(view);
 		player.Draw(window);
+		platform1.draw(window);
+		platform2.draw(window);
 		window.display();
 	}
 
