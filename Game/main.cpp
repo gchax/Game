@@ -3,7 +3,7 @@
 #include "player.h"
 #include "platform.h"
 
-static float viewheight = 800.0f;
+static float viewheight = 1000.0f;
 
 void resizeView(const sf::RenderWindow& window, sf::View& view)
 {
@@ -13,8 +13,8 @@ void resizeView(const sf::RenderWindow& window, sf::View& view)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1200, 800), "Jack!", sf::Style::Close | sf::Style::Resize);
-	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(viewheight + 400, viewheight));
+	sf::RenderWindow window(sf::VideoMode(1280, 800), "Jack!", sf::Style::Close | sf::Style::Resize);
+	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(viewheight + 600, viewheight));
 	sf::Texture playerTexture;
 	playerTexture.loadFromFile("test.png");
 	sf::Texture obj1Texture;
@@ -24,8 +24,8 @@ int main()
 
 	player player(&playerTexture, sf::Vector2u(8, 8), 0.12f, 200.0f);
 
-	platform platform1(&obj1Texture, sf::Vector2f(50.0f, 50.0f), sf::Vector2f(-100.0f, 15.0f));
-	platform platform2(&obj2Texture, sf::Vector2f(80.0f, 80.0f), sf::Vector2f(-200.0f, 0.0f));
+	platform platform1(&obj1Texture, sf::Vector2f(50.0f, 50.0f), sf::Vector2f(100.0f, 15.0f));
+	platform platform2(&obj2Texture, sf::Vector2f(80.0f, 80.0f), sf::Vector2f(200.0f, 0.0f));
 		
 	float deltaTime = 0.0f;
 	sf::Clock clock;
