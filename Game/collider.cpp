@@ -1,6 +1,6 @@
 #include "collider.h"
 
-collider::collider(sf::RectangleShape& body):
+collider::collider(RectangleShape& body):
 	body(body)
 {
 }
@@ -11,10 +11,10 @@ collider::~collider()
 
 bool collider::checkCollider(collider other, float push)
 {
-	sf::Vector2f otherPosition = other.getPosition();
-	sf::Vector2f otherHalfSize = other.getHalfSize();
-	sf::Vector2f thisPosition = getPosition();
-	sf::Vector2f thisHalfSize = getHalfSize();
+	Vector2f otherPosition = other.getPosition();
+	Vector2f otherHalfSize = other.getHalfSize();
+	Vector2f thisPosition = getPosition();
+	Vector2f thisHalfSize = getHalfSize();
 
 	float deltaX = otherPosition.x - thisPosition.x;
 	float deltaY = otherPosition.y - thisPosition.y;
@@ -23,7 +23,7 @@ bool collider::checkCollider(collider other, float push)
 
 	if (intersectX < 0.0f && intersectY < 0.0f)
 	{
-		push = std::min(std::max(push, 0.0f), 1.0f);
+		push = min(max(push, 0.0f), 1.0f);
 
 		if (intersectX > intersectY)
 		{

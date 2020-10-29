@@ -2,10 +2,11 @@
 #include <iostream>
 #include "player.h"
 #include "platform.h"
+#include "map.h"
 
-static float viewheight = 1000.0f;
+static float viewheight = 900.0f;
 
-void resizeView(const sf::RenderWindow& window, sf::View& view)
+void resizeView(const RenderWindow& window, View& view)
 {
 	float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
 	view.setSize(viewheight * aspectRatio, viewheight);
@@ -13,56 +14,93 @@ void resizeView(const sf::RenderWindow& window, sf::View& view)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1280, 800), "Jack!", sf::Style::Close | sf::Style::Resize);
-	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(viewheight + 600, viewheight));
-	sf::Texture playerTexture;
-	playerTexture.loadFromFile("test.png");
-	sf::Texture obj1Texture;
+	RenderWindow window(VideoMode(825, 900), "Jack!", Style::Close | Style::Resize);
+	View view(Vector2f(0.0f, 0.0f), Vector2f(viewheight - 75, viewheight));
+	Texture playerTexture;
+	playerTexture.loadFromFile("test_jack.png");
+	Texture obj1Texture;
 	obj1Texture.loadFromFile("test_obj1.png");
-	sf::Texture obj2Texture;
+	Texture obj2Texture;
 	obj2Texture.loadFromFile("test_obj2.png");
 
-	player player(&playerTexture, sf::Vector2u(8, 8), 0.12f, 200.0f);
+	player player(&playerTexture, Vector2u(8, 8), 0.12f, 300.0f);
 
-	platform platform1(&obj1Texture, sf::Vector2f(50.0f, 50.0f), sf::Vector2f(100.0f, 15.0f));
-	platform platform2(&obj2Texture, sf::Vector2f(80.0f, 80.0f), sf::Vector2f(200.0f, 0.0f));
+	platform platform1(nullptr, Vector2f(1725.0f, 75.0f), Vector2f(0.0f, -825.0f));
+	platform platform2(nullptr, Vector2f(75.0f, 1650.0f), Vector2f(-825.0f, 37.5f));
+	platform platform3(nullptr, Vector2f(75.0f, 1650.0f), Vector2f(825.0f, 37.5f));
+	platform platform4(nullptr, Vector2f(1725.0f, 75.0f), Vector2f(0.0f, 900.0f));
 		
 	float deltaTime = 0.0f;
-	sf::Clock clock;
+	Clock clock;
 
 	while (window.isOpen())
 	{
 		deltaTime = clock.restart().asSeconds();
 
-		sf::Event evt;
+		Event evt;
 		while (window.pollEvent(evt)) 
 		{
 			switch (evt.type)
 			{
-			case sf::Event::Closed:
+			case Event::Closed:
 				window.close();
 				break;
-			case sf::Event::Resized:
+			case Event::Resized:
 				resizeView(window, view);
 				break;
 			}
 		}
 
-		player.Update(deltaTime);
+		player.update(deltaTime);
 		
-		collider playerCollision = player.getCollider();
-		collider platform1Collision = platform1.getCollider();
-		platform1.getCollider().checkCollider(playerCollision, 0.0f);
+		collider playerCollision = player.getCollider(); 
+		platform1.getCollider().checkCollider(playerCollision, 1.0f);
 		platform2.getCollider().checkCollider(playerCollision, 1.0f);
-		platform2.getCollider().checkCollider(platform1Collision, 0.0f);
+		platform3.getCollider().checkCollider(playerCollision, 1.0f);
+		platform4.getCollider().checkCollider(playerCollision, 1.0f);
 		
 		view.setCenter(player.getPosition());
 		
-		window.clear(sf::Color(255, 170, 77));
+		window.clear(/*Color(255, 170, 77)*/);
 		window.setView(view);
-		player.Draw(window);
-		platform1.draw(window);
-		platform2.draw(window);
+		
+		const int level[] =
+		{
+			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+		};
+
+		tilemap map;
+		if (!map.load("map.png", Vector2u(75, 75), level, 23, 24)) return -1;
+
+		map.setOrigin(862.5f, 862.5f);
+		map.setPosition(0.0f, 0.0f);
+
+		window.draw(map);
+
+		player.draw(window);
 		window.display();
 	}
 

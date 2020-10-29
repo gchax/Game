@@ -1,19 +1,19 @@
 #pragma once
-#include <SFML\Graphics.hpp>
+#include "stdfn.h"
+
 class animation
 {
 public:
-	animation(sf::Texture* texture, sf::Vector2u imageCount, float switchTime);
+	animation(Texture* texture, Vector2u imageCount, float switchTime);
 	~animation();
 
 	void Update(int row, float deltaTime);
 
-public:
-	sf::IntRect uvRect;
+	IntRect uvRect;
 
 private:
-	sf::Vector2u imageCount;
-	sf::Vector2u currentImage;
+	Vector2u imageCount;
+	Vector2u currentImage;
 
 	float totalTime;
 	float switchTime;
