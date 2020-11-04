@@ -2,7 +2,7 @@
 #include <iostream>
 #include "player.h"
 #include "platform.h"
-#include "mapstate.h"
+#include "map.h"
 
 static float viewheight = 900.0f;
 int StateCheck = 0;
@@ -21,7 +21,7 @@ int main()
 	Texture mapOutdoor;
 	mapOutdoor.loadFromFile("map_outdoor.png");
 	platform background1(&mapOutdoor, Vector2f(9600.0f, 9600.0f), Vector2f(4800.0f, 4800.0f));
-	vector<mapstate> block0;
+	vector<themap> block0;
 
 	Texture playerTexture;
 	playerTexture.loadFromFile("test_jack.png");
@@ -42,7 +42,7 @@ int main()
 
 	
 	int outdoor[80][80] =
-		{
+	{
 			{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
@@ -124,17 +124,17 @@ int main()
 			{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0}
 		};
-		for (int mapX = 0; mapX < 80; mapX++)
+	for (int mapX = 0; mapX < 80; mapX++)
+	{
+		for (int mapY = 0; mapY < 80; mapY++)
 		{
-			for (int mapY = 0; mapY < 80; mapY++)
+			if (outdoor[mapY][mapX] == 0)
 			{
-				if (outdoor[mapY][mapX] == 0)
-				{
-					mapstate outdoor(nullptr, Vector2f(((mapX) * 120) + 60, ((mapY) * 120) + 60), Vector2f(120.f, 120.f));
-					block0.push_back(outdoor);
-				}
+				themap outdoor(nullptr, Vector2f(((mapX) * 120) + 60, ((mapY) * 120) + 60), Vector2f(120.f, 120.f));
+				block0.push_back(outdoor);
 			}
 		}
+	}
 
 	float deltaTime = 0.0f;
 	Clock clock;

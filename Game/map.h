@@ -2,11 +2,11 @@
 #include "stdfn.h"
 #include "collider.h"
 
-class mapstate
+class themap
 {
 public:
-	mapstate(Texture* texture, Vector2f position, Vector2f size);
-	~mapstate();
+	themap(Texture* texture, Vector2f position, Vector2f size);
+	~themap();
 
 	void draw(RenderWindow& window);
 	collider getCollider() { return collider(body); }
