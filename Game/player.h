@@ -2,10 +2,12 @@
 #include "stdfn.h"
 #include "animation.h"
 #include "collider.h"
+#include "projectile.h"
 
 class player
 {
 public:
+	char direction = '.';
 	player(Texture* texture, Vector2u imageCount, float switchTime, float speed);
 	~player();
 

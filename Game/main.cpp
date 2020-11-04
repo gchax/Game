@@ -2,10 +2,10 @@
 #include <iostream>
 #include "player.h"
 #include "platform.h"
-#include "map.h"
+#include "bitmap.h"
 
 static float viewheight = 900.0f;
-int StateCheck = 0;
+int counter = 0;
 
 void resizeView(const RenderWindow& window, View& view)
 {
@@ -15,22 +15,22 @@ void resizeView(const RenderWindow& window, View& view)
 
 int main()
 {
-	RenderWindow window(VideoMode(1600, 900), "Jack!", Style::Close | Style::Resize);
+	RenderWindow window(VideoMode(1600, 900), "Jack!", Style::Close | Style::Fullscreen);
 	View view(Vector2f(0.0f, 0.0f), Vector2f(viewheight + 700, viewheight));
+	window.setFramerateLimit(90);
 
 	Texture mapOutdoor;
 	mapOutdoor.loadFromFile("map_outdoor.png");
-	platform background1(&mapOutdoor, Vector2f(9600.0f, 9600.0f), Vector2f(4800.0f, 4800.0f));
-	vector<themap> block0;
+	platform background(&mapOutdoor, Vector2f(9600.0f, 9600.0f), Vector2f(4800.0f, 4800.0f));
+	vector<bitmap> block0;
 
 	Texture playerTexture;
 	playerTexture.loadFromFile("test_jack.png");
 	player player(&playerTexture, Vector2u(8, 8), 0.12f, 300.0f);
-	player.setPosition(Vector2f(4440.0f ,8160.0f));
 
 	Texture mapHome;
 	mapHome.loadFromFile(".png");
-	//platform platform2(nullptr, Vector2f(75.0f, 1650.0f), Vector2f(-825.0f, 37.5f));
+	//platform home(nullptr, Vector2f(75.0f, 1650.0f), Vector2f(-825.0f, 37.5f));
 	
 	Texture mapStore;
 	mapStore.loadFromFile(".png");
@@ -40,7 +40,18 @@ int main()
 	mapCastle.loadFromFile(".png");
 	//platform platform4(nullptr, Vector2f(1725.0f, 75.0f), Vector2f(0.0f, 900.0f));
 
-	
+	Texture fireball;
+	fireball.loadFromFile("fireball.png");
+
+	Texture item;
+	item.loadFromFile("sparkle.png");
+	platform wand(&item, Vector2f(25.f, 25.f), Vector2f(3500.0f, 7920.0f));
+	projectile bullet(&fireball, 10.f, 0.f);
+
+	vector<projectile>::const_iterator iter;
+	vector<projectile> projectileArray;
+
+
 	int outdoor[80][80] =
 	{
 			{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
@@ -66,7 +77,7 @@ int main()
 			{0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-			{0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
@@ -130,18 +141,19 @@ int main()
 		{
 			if (outdoor[mapY][mapX] == 0)
 			{
-				themap outdoor(nullptr, Vector2f(((mapX) * 120) + 60, ((mapY) * 120) + 60), Vector2f(120.f, 120.f));
+				bitmap outdoor(nullptr, Vector2f(((mapX) * 120) + 60, ((mapY) * 120) + 60), Vector2f(120.f, 120.f));
 				block0.push_back(outdoor);
 			}
 		}
 	}
+	player.setPosition(Vector2f(4420.0f ,8160.0f));
 
 	float deltaTime = 0.0f;
-	Clock clock;
+	Clock clock[3];
 
 	while (window.isOpen())
 	{
-		deltaTime = clock.restart().asSeconds();
+		deltaTime = clock[0].restart().asSeconds();
 
 		Event evt;
 		while (window.pollEvent(evt)) 
@@ -151,21 +163,45 @@ int main()
 		}
 
 		player.update(deltaTime);
-		view.setCenter(player.getPosition());
 
+		collider playerCollision = player.getCollider();
+		collider bulletCollision = bullet.getCollider();
 		/*platform1.getCollider().checkCollider(playerCollision, 1.0f);
 		platform2.getCollider().checkCollider(playerCollision, 1.0f);
 		platform3.getCollider().checkCollider(playerCollision, 1.0f);
 		platform4.getCollider().checkCollider(playerCollision, 1.0f);*/
 		
-		
-		collider playerCollision = player.getCollider();
 		for (int i = 0; i < block0.size(); i++)	block0[i].getCollider().checkCollider(playerCollision, 1.0f);
 
+		view.setCenter(player.getPosition());
 		window.clear(Color(127, 231, 255));
 		window.setView(view);
+		background.draw(window);
 
-		background1.draw(window);
+		Time elapse[3];
+		elapse[0] = clock[0].getElapsedTime();
+		elapse[1] = clock[1].getElapsedTime();
+		elapse[2] = clock[2].getElapsedTime();
+
+		if (elapse[1].asSeconds() >= 0.2)
+		{
+			clock[1].restart();
+			if (Keyboard::isKeyPressed(Keyboard::Space))
+			{
+				bullet.body.setPosition(player.getPosition());
+				bullet.direction = player.direction;
+				projectileArray.push_back(bullet);
+			}
+		}
+		counter = 0;
+		for (iter = projectileArray.begin(); iter != projectileArray.end();iter++)
+		{
+			projectileArray[counter].update(deltaTime);
+			window.draw(projectileArray[counter].body);
+			counter++;
+		}
+
+		wand.draw(window);
 		player.draw(window);
 		window.display();
 	}

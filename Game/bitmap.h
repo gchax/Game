@@ -2,11 +2,11 @@
 #include "stdfn.h"
 #include "collider.h"
 
-class themap
+class bitmap
 {
 public:
-	themap(Texture* texture, Vector2f position, Vector2f size);
-	~themap();
+	bitmap(Texture* texture, Vector2f position, Vector2f size);
+	~bitmap();
 
 	void draw(RenderWindow& window);
 	collider getCollider() { return collider(body); }

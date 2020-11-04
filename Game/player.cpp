@@ -24,33 +24,59 @@ void player::update(float deltaTime)
 	if (Keyboard::isKeyPressed(Keyboard::W))
 	{
 		movement.y -= speed * deltaTime;
+		direction = 'u';
 		row = 1;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::S))
 	{
 		movement.y += speed * deltaTime;
+		direction = 'd';
 		row = 3;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		movement.x -= speed * deltaTime;
+		direction = 'l';
 		row = 5;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		movement.x += speed * deltaTime;
+		direction = 'r';
+		row = 7;
+	}
+	
+	//run
+	if (Keyboard::isKeyPressed(Keyboard::W) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.y -= (speed * deltaTime) / 3.f;
+		row = 1;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::S) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.y += (speed * deltaTime) / 3.f;
+		row = 3;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::A) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.x -= (speed * deltaTime) / 3.f;
+		row = 5;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift))
+	{
+		movement.x += (speed * deltaTime) / 3.f;
 		row = 7;
 	}
 
-	////hit
-	//if (Keyboard::isKeyPressed(Keyboard::Space))
+	//hit
+	if (Keyboard::isKeyPressed(Keyboard::Space)) row ;
 
 	if (row == 1 && movement.y == 0) row = 0;
 	if (row == 3 && movement.y == 0) row = 2;
 	if (row == 5 && movement.x == 0) row = 4;
 	if (row == 7 && movement.x == 0) row = 6;
 
-	animation.Update(row, deltaTime);
+	animation.update(row, deltaTime);
 	body.setTextureRect(animation.uvRect);
 	body.move(movement);
 }

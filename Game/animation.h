@@ -7,7 +7,7 @@ public:
 	animation(Texture* texture, Vector2u imageCount, float switchTime);
 	~animation();
 
-	void Update(int row, float deltaTime);
+	void update(int row, float deltaTime);
 
 	IntRect uvRect;
 

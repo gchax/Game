@@ -15,7 +15,7 @@ animation::~animation()
 {
 }
 
-void animation::Update(int row, float deltaTime)
+void animation::update(int row, float deltaTime)
 {
 	currentImage.y = row;
 	totalTime += deltaTime;

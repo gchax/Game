@@ -21,8 +21,9 @@
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="collider.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="map.cpp" />
+    <ClCompile Include="bitmap.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="projectile.cpp" />
@@ -30,7 +31,8 @@
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="collider.h" />
-    <ClInclude Include="map.h" />
+    <ClInclude Include="bitmap.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="projectile.h" />
