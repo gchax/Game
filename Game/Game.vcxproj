@@ -22,16 +22,18 @@
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="collider.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="map.cpp" />
+    <ClCompile Include="mapstate.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="collider.h" />
-    <ClInclude Include="map.h" />
+    <ClInclude Include="mapstate.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="projectile.h" />
     <ClInclude Include="stdfn.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

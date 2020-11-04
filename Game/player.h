@@ -11,6 +11,7 @@ public:
 
 	void update(float deltaTime);
 	void draw(RenderWindow& window);
+	void setPosition(sf::Vector2f(xy)) { body.setPosition(xy); };
 
 	Vector2f getPosition() { return body.getPosition(); }
 	collider getCollider() { return collider(body); }
@@ -21,4 +22,3 @@ private:
 	unsigned int row;
 	float speed;
 };
-
