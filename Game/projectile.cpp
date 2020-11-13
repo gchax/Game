@@ -4,7 +4,7 @@ projectile::projectile(Texture* texture, float speed, float attackDamage)
 {
 	this->speed = speed;
 	this->atkdmg = attackDamage;
-	body.setSize(Vector2f(36.f, 36.f));
+	body.setSize(Vector2f(15.f, 15.f));
 	body.setPosition(Vector2f(0.f, 0.f));
 	body.setOrigin(body.getSize() / 2.f);
 	body.setTexture(texture);

@@ -4,9 +4,9 @@ player::player(Texture* texture, Vector2u imageCount, float switchTime, float sp
 	animation(texture, imageCount, switchTime)
 {
 	this->speed = speed;
-	row = 2;
+	row = 1;
 
-	body.setSize(Vector2f(64.0f, 108.0f));
+	body.setSize(Vector2f(71.11f, 120.0f));
 	body.setOrigin(body.getSize() / 2.f);
 	body.setPosition(0.0f, 0.0f);
 	body.setTexture(texture);
@@ -33,7 +33,7 @@ void player::update(float deltaTime)
 		direction = 'd';
 		row = 3;
 	}
-	if (Keyboard::isKeyPressed(Keyboard::A))
+	else if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		movement.x -= speed * deltaTime;
 		direction = 'l';
@@ -45,31 +45,6 @@ void player::update(float deltaTime)
 		direction = 'r';
 		row = 7;
 	}
-	
-	//run
-	if (Keyboard::isKeyPressed(Keyboard::W) && Keyboard::isKeyPressed(Keyboard::LShift))
-	{
-		movement.y -= (speed * deltaTime) / 3.f;
-		row = 1;
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::S) && Keyboard::isKeyPressed(Keyboard::LShift))
-	{
-		movement.y += (speed * deltaTime) / 3.f;
-		row = 3;
-	}
-	if (Keyboard::isKeyPressed(Keyboard::A) && Keyboard::isKeyPressed(Keyboard::LShift))
-	{
-		movement.x -= (speed * deltaTime) / 3.f;
-		row = 5;
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift))
-	{
-		movement.x += (speed * deltaTime) / 3.f;
-		row = 7;
-	}
-
-	//hit
-	if (Keyboard::isKeyPressed(Keyboard::Space)) row ;
 
 	if (row == 1 && movement.y == 0) row = 0;
 	if (row == 3 && movement.y == 0) row = 2;
