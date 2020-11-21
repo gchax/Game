@@ -3,6 +3,7 @@
 #include "animation.h"
 #include "collider.h"
 #include "projectile.h"
+#include "hitbox.h"
 
 class player
 {
@@ -12,11 +13,16 @@ public:
 	~player();
 
 	void update(float deltaTime);
+	void updateBossFight(float deltaTime);
 	void draw(RenderWindow& window);
-	void setPosition(sf::Vector2f(xy)) { body.setPosition(xy); };
-	void setSize(sf::Vector2f(x)) { body.setSize(x); };
+	void onCollision(Vector2f direction);
+	void setPosition(Vector2f(xy)) { body.setPosition(xy); };
+	void setSize(Vector2f(wh)) { body.setSize(wh); };
+	void setAnimationRow(unsigned int r) { row = r; }
+	void move(Vector2f(ab)) { body.move(ab); }
 
 	Vector2f getPosition() { return body.getPosition(); }
+	FloatRect getGlobalBounds() { return body.getGlobalBounds(); }
 	collider getCollider() { return collider(body); }
 
 private:
@@ -24,4 +30,8 @@ private:
 	animation animation;
 	unsigned int row;
 	float speed;
+
+	Vector2f velocity;
+	bool canJump = false;
+	float jumpHeight = 150.f;
 };

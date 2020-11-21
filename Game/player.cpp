@@ -4,11 +4,10 @@ player::player(Texture* texture, Vector2u imageCount, float switchTime, float sp
 	animation(texture, imageCount, switchTime)
 {
 	this->speed = speed;
-	row = 1;
+	row = 4;
 
 	body.setSize(Vector2f(71.11f, 120.0f));
 	body.setOrigin(body.getSize() / 2.f);
-	body.setPosition(0.0f, 0.0f);
 	body.setTexture(texture);
 }
 
@@ -56,7 +55,62 @@ void player::update(float deltaTime)
 	body.move(movement);
 }
 
+void player::updateBossFight(float deltaTime)
+{
+	velocity.x *= 0.f;
+		
+	if (Keyboard::isKeyPressed(Keyboard::W) && canJump)
+	{
+		canJump = false;
+		velocity.y = -sqrtf(2.f * 3000.f * jumpHeight);
+		//row = 1;
+	}
+
+	velocity.y += 3000.f * deltaTime;
+
+	if (Keyboard::isKeyPressed(Keyboard::A))
+	{
+		velocity.x -= speed;
+		direction = 'l';
+		row = 5;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::D))
+	{
+		velocity.x += speed;
+		direction = 'r';
+		row = 7;
+	}
+
+	if (row == 5 && velocity.x == 0) row = 4;
+	if (row == 7 && velocity.x == 0) row = 6;
+
+	animation.update(row, deltaTime);
+	body.setTextureRect(animation.uvRect);
+	body.move(velocity * deltaTime);
+}
+
 void player::draw(RenderWindow& window)
 {
 	window.draw(body);
+}
+
+void player::onCollision(Vector2f direction)
+{
+	if (direction.x < 0.f)
+	{
+		velocity.x = 0.f;
+	}
+	else if (direction.x > 0.f)
+	{
+		velocity.x = 0.f;
+	}
+	if (direction.y < 0.f)
+	{
+		velocity.y = 0.f;
+		canJump = true;
+	}
+	else if (direction.y > 0.f)
+	{
+		velocity.y = 0.f;
+	}
 }

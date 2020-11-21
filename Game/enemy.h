@@ -13,11 +13,13 @@ public:
 
 	void updateStill(float deltaTime);
 	void updateFly(float deltaTime, Vector2f playerPosition);
+	void updateWalk();
+	void updateSemiBoss();
+	void updateBoss(float deltaTime);
 	void draw(RenderWindow& window);
 	void setPosition(sf::Vector2f(xy)) { body.setPosition(xy); };
 
 	Vector2f getPosition() { return body.getPosition(); }
-	collider getCollider() { return collider(body); }
 
 private:
 	RectangleShape body;

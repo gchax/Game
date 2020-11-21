@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "random.h"
 
 enemy::enemy(Texture* texture, Vector2u imageCount, Vector2f size, Vector2f position, float switchTime, float speed) :
 	animation(texture, imageCount, switchTime)
@@ -24,14 +25,18 @@ void enemy::updateStill(float deltaTime)
 	body.setTextureRect(animation.uvRect);
 }
 
-	Vector2f movement(0.0f, 0.0f);
-
 void enemy::updateFly(float deltaTime, Vector2f playerPosition)
 {
 	animation.update(0, deltaTime);
 	body.setTextureRect(animation.uvRect);
 	body.setPosition(position.x, playerPosition.y);
-	//body.setPosition(position.x, playerPosition.y);
+}
+
+void enemy::updateBoss(float deltaTime)
+{
+	/*.y += 3000.f * deltaTime;
+
+	body.move(velocity * deltaTime);*/
 }
 
 void enemy::draw(RenderWindow& window)

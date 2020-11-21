@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
+    <ClCompile Include="button.cpp" />
+    <ClCompile Include="cloudEnemy.cpp" />
     <ClCompile Include="collider.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="hitbox.cpp" />
@@ -32,6 +34,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
+    <ClInclude Include="button.h" />
+    <ClInclude Include="cloudEnemy.h" />
     <ClInclude Include="collider.h" />
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="enemy.h" />
