@@ -12,22 +12,25 @@ projectile::projectile(Texture* texture, float speed, float attackDamage)
 
 void projectile::update(float deltaTime)
 {
-	Vector2f movement(0.0f, 0.0f);
+	if (direction == UP)
+	{
+		body.move(0, -(speed * deltaTime));
+	}
+	if (direction == DOWN)
+	{
+		body.move(0, speed * deltaTime);
+	}
+	if (direction == LEFT)
+	{
+		body.move(-(speed * deltaTime), 0);
+	}
+	if (direction == RIGHT)
+	{
+		body.move(speed * deltaTime, 0);
+	}
+}
 
-	if (direction == 'u')
-	{
-		body.move(0, -(speed));
-	}
-	if (direction == 'd')
-	{
-		body.move(0, speed);
-	}
-	if (direction == 'l')
-	{
-		body.move(-(speed), 0);
-	}
-	if (direction == 'r')
-	{
-		body.move(speed, 0);
-	}
+void projectile::draw(RenderWindow& window)
+{
+	window.draw(body);
 }

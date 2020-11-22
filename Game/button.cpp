@@ -31,7 +31,6 @@ button::~button()
 
 void button::update(const Vector2f mousePos)
 {
-	/*Update the booleans for hover and pressed*/
 	this->buttonState = BTN_IDLE;
 
 	//Hover

@@ -34,9 +34,6 @@ void enemy::updateFly(float deltaTime, Vector2f playerPosition)
 
 void enemy::updateBoss(float deltaTime)
 {
-	/*.y += 3000.f * deltaTime;
-
-	body.move(velocity * deltaTime);*/
 }
 
 void enemy::draw(RenderWindow& window)

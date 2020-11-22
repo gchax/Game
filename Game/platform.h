@@ -8,12 +8,11 @@ public:
 	platform(Texture* texture, Vector2f size, Vector2f position);
 	~platform();
 
+	RectangleShape body;
+
 	void draw(RenderWindow& window);
 	collider getCollider() { return collider(body); }
 
-	Vector2f getPosition() { return body.getPosition(); }
-
 private:
-	RectangleShape body;
 };
 

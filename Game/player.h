@@ -8,7 +8,13 @@
 class player
 {
 public:
-	char direction = '.';
+	int direction = UP;
+	float speed;
+	float hp;
+	float mp;
+	int money;
+	float gravity;
+
 	player(Texture* texture, Vector2u imageCount, float switchTime, float speed);
 	~player();
 
@@ -29,7 +35,6 @@ private:
 	RectangleShape body;
 	animation animation;
 	unsigned int row;
-	float speed;
 
 	Vector2f velocity;
 	bool canJump = false;

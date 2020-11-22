@@ -23,25 +23,25 @@ void player::update(float deltaTime)
 	if (Keyboard::isKeyPressed(Keyboard::W))
 	{
 		movement.y -= speed * deltaTime;
-		direction = 'u';
+		direction = UP;
 		row = 1;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::S))
 	{
 		movement.y += speed * deltaTime;
-		direction = 'd';
+		direction = DOWN;
 		row = 3;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		movement.x -= speed * deltaTime;
-		direction = 'l';
+		direction = LEFT;
 		row = 5;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		movement.x += speed * deltaTime;
-		direction = 'r';
+		direction = RIGHT;
 		row = 7;
 	}
 
@@ -62,11 +62,11 @@ void player::updateBossFight(float deltaTime)
 	if (Keyboard::isKeyPressed(Keyboard::W) && canJump)
 	{
 		canJump = false;
-		velocity.y = -sqrtf(2.f * 3000.f * jumpHeight);
+		velocity.y = -sqrtf(2.f * gravity * jumpHeight);
 		//row = 1;
 	}
 
-	velocity.y += 3000.f * deltaTime;
+	velocity.y += gravity * deltaTime;
 
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
