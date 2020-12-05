@@ -21,27 +21,29 @@
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="button.cpp" />
-    <ClCompile Include="cloudEnemy.cpp" />
     <ClCompile Include="collider.cpp" />
+    <ClCompile Include="damageDisplay.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="hitbox.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="bitmap.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="playerGUI.cpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="random.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="button.h" />
-    <ClInclude Include="cloudEnemy.h" />
     <ClInclude Include="collider.h" />
     <ClInclude Include="bitmap.h" />
+    <ClInclude Include="damageDisplay.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="hitbox.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="playerGUI.h" />
     <ClInclude Include="projectile.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="stdfn.h" />

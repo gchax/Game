@@ -17,6 +17,7 @@ player::~player()
 
 void player::update(float deltaTime)
 {
+	body.setFillColor(Color(255, 255, 255, 255));
 	Vector2f movement(0.0f, 0.0f);
 
 	//walk
@@ -32,7 +33,7 @@ void player::update(float deltaTime)
 		direction = DOWN;
 		row = 3;
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::A))
+	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		movement.x -= speed * deltaTime;
 		direction = LEFT;
@@ -57,6 +58,7 @@ void player::update(float deltaTime)
 
 void player::updateBossFight(float deltaTime)
 {
+	body.setFillColor(Color(255, 255, 255, 255));
 	velocity.x *= 0.f;
 		
 	if (Keyboard::isKeyPressed(Keyboard::W) && canJump)
@@ -71,13 +73,13 @@ void player::updateBossFight(float deltaTime)
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		velocity.x -= speed;
-		direction = 'l';
+		direction = LEFT;
 		row = 5;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		velocity.x += speed;
-		direction = 'r';
+		direction = RIGHT;
 		row = 7;
 	}
 
@@ -87,6 +89,11 @@ void player::updateBossFight(float deltaTime)
 	animation.update(row, deltaTime);
 	body.setTextureRect(animation.uvRect);
 	body.move(velocity * deltaTime);
+}
+
+void player::hurt()
+{
+	body.setFillColor(Color(255, 0, 0, 255));
 }
 
 void player::draw(RenderWindow& window)

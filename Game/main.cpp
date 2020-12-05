@@ -4,15 +4,8 @@
 #include "bitmap.h"
 #include "enemy.h"
 #include "button.h"
+#include "damageDisplay.h"
 
-//define global variables;
-static float viewWidght = 1700.f;
-static float viewHeight = 1000.f;
-unsigned int framerateLimit = 90;
-float maxHP = 1000.f;
-float maxMP = 500.f;
-float gravity = 3000.f;
-int money = 100;
 
 //resizable view;
 void resizeView(const RenderWindow&, View&);
@@ -28,36 +21,40 @@ int main()
 	srand(time(NULL));
 
 
+	//define screen size;
+	Vector2u ws = window.getSize();
+	Vector2f windowSize(static_cast<float>(ws.x), static_cast<float>(ws.y));
+
+
 	//initialize font;
 	Font font;
 	font.loadFromFile("8BitDragon.ttf");
 
 
-	//initialize player;
-	Texture jack;
-	jack.loadFromFile("jack.png");
-	player player(&jack, Vector2u(8, 8), 0.07f, 500.0f);
-
-
 	//initialize variables;
-	int state = MENU;
+	int state = STORE;
+	bool isHurt = false;
 	bool isPause = false;
+	bool isSpawned = false;
 	bool isPlayerDead = false;
+	bool isUnlocked = false;
 	bool collisionCheat = false;
 	bool gravityCheat = false;
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
-	int wandState = UNOBTAINED;
+	int wandLevel = 0;
+	int key = 0;
 	int playerScore = 0;
-	int playerMoney = money;
+	int playerMoney = 0;
 	float playerHP = maxHP;
 	float playerMP = maxMP;
 	float playerGravity = gravity;
 
 
-	//define screen size;
-	Vector2u ws = window.getSize();
-	Vector2f windowSize(static_cast<float>(ws.x), static_cast<float>(ws.y));
+	//initialize player;
+	Texture jack;
+	jack.loadFromFile("jack.png");
+	player player(&jack, Vector2u(8, 8), 0.07f, 600.0f);
 
 
 	//declare delta time;
@@ -274,23 +271,23 @@ int main()
 	button startGame(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 		2.f, &font, 45, "START", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	startGame.setTextOutlineColor(Color::Black);
-	startGame.setTextOutlineThickness(1.f);
+	startGame.setTextOutlineThickness(2);
 	button score(Vector2f(windowSize.x / 2.f, 4.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 45, "SCORES", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		2.f, &font, 45, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	score.setTextOutlineColor(Color::Black);
-	score.setTextOutlineThickness(1.f);
+	score.setTextOutlineThickness(2);
 	button credit(Vector2f(windowSize.x / 2.f, 5.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 		2.f, &font, 45, "CREDITS", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	credit.setTextOutlineColor(Color::Black);
-	credit.setTextOutlineThickness(1.f);
+	credit.setTextOutlineThickness(2);
 	button exitGame(Vector2f(windowSize.x / 2.f, 5.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 		2.f, &font, 45, "EXIT", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	exitGame.setTextOutlineColor(Color::Black);
-	exitGame.setTextOutlineThickness(1.f);
+	exitGame.setTextOutlineThickness(2);
 
 	string what_do_you_want[5] = { "How shall I serve thee, master?","What is it that you desire?","What is the purpose of thy presence?","Want some power-ups?","Ye shall only find good stuff here" };
 	string bought[3] = { "Thank you, kind sir!\n    Anything else?", "Anything else?", "  Good choice!\nAnything else?" };
-	int buttonState = IDLE;
+	int buttonState = UNSELECTED;
 	button welcomeText(Vector2f(box2.body.getPosition().x, box2.body.getPosition().y + 15.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 		2.f, &font, 55, what_do_you_want[rand() % 5], Color::Black, Color::Black, Color::Black);
 	button smallPotion(Vector2f(windowSize.x / 2.f, 2.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
@@ -307,7 +304,7 @@ int main()
 		1.f, &font, 35, "OP Wand                              2000", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	button done(Vector2f(windowSize.x / 2.f, 8.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 		1.f, &font, 35, "Done.", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button thxText(Vector2f(box2.body.getPosition().x, box2.body.getPosition().y + 15.f), Vector2f(2.f * windowSize.x / 3.f, 150.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
+	button thxText(Vector2f(box2.body.getPosition().x, box2.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 150.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
 		2.f, &font, 55, bought[rand() % 3], Color::Black, Color::Black, Color::Black);
 	button byeText(Vector2f(box2.body.getPosition().x, box2.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 75.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
 		2.f, &font, 45, "Gladly looking forward to seeing you again, kind sir.", Color::Black, Color::Black, Color::Black);
@@ -317,7 +314,7 @@ int main()
 	button gameOver(Vector2f(windowSize.x / 2.f, 2.5f * windowSize.y / 6.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 		2.f, &font, 150, "GAME OVER", Color::Red, Color::Red, Color::Red);
 	button scoreState(Vector2f(windowSize.x / 2.f, 3.5f * windowSize.y / 6.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 25, "SEE THE SCORE", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		2.f, &font, 25, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	button returnToMenu(Vector2f(windowSize.x / 2.f, 9.f * windowSize.y / 10.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 		2.f, &font, 25, "RETURN TO THE MENU", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 
@@ -329,38 +326,42 @@ int main()
 
 	//initialize weapons;
 	Texture item;
-	item.loadFromFile("sparkle.png");
-	platform wand(&item, Vector2f(75.f, 75.f), Vector2f(945.0f, 1400.0f));
-
 	Texture fireball;
+	item.loadFromFile("sparkle.png");
 	fireball.loadFromFile("fireball.png");
-	projectile bullet(&fireball, 1000.f, 0.f);
+	platform wand(&item, Vector2f(75.f, 75.f), Vector2f(945.0f, 1400.0f));
+	projectile bullet(&fireball, 1000.f, 100.f);
 	vector<projectile>::const_iterator bulletIter;
 	vector<projectile> projectileArray;
 
 
-	//initialize enemies;
+	//initialize enemies4;
 	Texture gargoyle1;
 	gargoyle1.loadFromFile("gargoyle1.png");
-	enemy normalGargoyle1(&gargoyle1, Vector2u(5, 1), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f);
+	enemy normalGargoyle1(&gargoyle1, Vector2u(5, 1), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2000.f, 15);
 
 	Texture gargoyle1_5;
 	gargoyle1_5.loadFromFile("flippedgargoyle1.png");
-	enemy normalGargoyle2(&gargoyle1_5, Vector2u(5, 1), Vector2f(360.f, 232.f), Vector2f(2520.f, 4500.f), 0.08f, 20.f);
+	enemy normalGargoyle2(&gargoyle1_5, Vector2u(5, 1), Vector2f(360.f, 232.f), Vector2f(2520.f, 4500.f), 0.08f, 20.f, 2000.f, 15);
 
 	Texture gargoyle2;
 	gargoyle2.loadFromFile("gargoyle2.png");
-	//enemy normalGargoyle1(&gargoyle2, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f);
+	enemy toughGargoyle1(&gargoyle2, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2500.f, 25);
 
 	Texture gargoyle2_5;
 	gargoyle2_5.loadFromFile("flippedgargoyle2.png");
-	//enemy normalGargoyle2(&gargoyle2_5, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(2520.f, 4500.f), 0.08f, 20.f);
+	enemy toughGargoyle2(&gargoyle2_5, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(2520.f, 4500.f), 0.08f, 20.f, 2500.f, 25);
 
 	Texture titan1;
 	titan1.loadFromFile("titan1.png");
 	vector<enemy>::const_iterator titan1Iter;
 	vector<enemy> titan1Array;
-	enemy normalTitan(&titan1, Vector2u(3, 4), Vector2f(152.f, 200.f), Vector2f(2500.f, 2030.f), 0.04f, 20.f);
+	enemy normalTitan1(&titan1, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 200.f, 2000.f, 50);
+	for (int i = 0;i < 7;i++)
+	{
+		titan1Array.push_back(normalTitan1);
+		normalTitan1.body.setPosition(generateIntRandom(2200, 2500.f), generateRandom(1150, 900.f));
+	}
 
 	Texture titan2;
 	titan2.loadFromFile("titan2.png");
@@ -369,12 +370,12 @@ int main()
 
 	Texture monSeller;
 	monSeller.loadFromFile("mon_seller.png");
-	enemy seller(&monSeller, Vector2u(2, 1), Vector2f(33.f * 16, 49.f * 16), Vector2f(windowSize.x / 2.f + 432.f, windowSize.y / 2.f - 50.f), 0.8, 0.f);
+	enemy seller(&monSeller, Vector2u(2, 1), Vector2f(33.f * 16, 49.f * 16), Vector2f(windowSize.x / 2.f + 432.f, windowSize.y / 2.f - 50.f), 0.8, 0.f, 0.f, 0);
 
-
-	//initialize collider;
-	collider playerCollision = player.getCollider();
-	collider bulletCollision = bullet.getCollider();
+	damageDisplay dmgDp;
+	dmgDp.text.setFont(font);
+	vector<damageDisplay>::const_iterator dmgIter;
+	vector<damageDisplay> dmgArray;
 
 
 	//loop;
@@ -398,23 +399,32 @@ int main()
 		Vector2i pos = Mouse::getPosition(window);
 		Vector2f mousePos(static_cast<float>(pos.x), static_cast<float>(pos.y));
 
-		//player position;
-		Vector2f playerPosition = player.getPosition();
-		//cout << "x = " << player.getPosition().x << " y = " << player.getPosition().y << std::endl;
-		cout << "Mana = " << playerMP << endl;
-
-		//player stats;
+		//player variables;
+		Vector2f playerPosition = player.body.getPosition();
+		collider playerCollision = player.getCollider();
 		player.hp = playerHP;
 		if (playerHP >= maxHP) playerHP = maxHP;
 		player.mp = playerMP;
 		if (playerMP >= maxMP) playerMP = maxMP;
 		player.money = playerMoney;
+		if (playerMoney < 0) playerMoney = 0;
+		if (wandLevel >= 60) wandLevel = 60;
 		player.gravity = playerGravity;
+		playerGUI gui(&font, player.hp, player.mp, player.money, playerScore, wandLevel);
+		cout << "x = " << playerPosition.x << "\ty = " << playerPosition.y << endl;
+
+		//counters;
+		int titan1Counter = 0;
+		int bulletCounter = 0;
+		int dmgCounter = 0;
 
 		//textbox
 		platform box1(&textbox, Vector2f(680.f, 152.f), Vector2f(playerPosition.x + 10.f, playerPosition.y + 300.f));
 		button pickItUp(Vector2f(box1.body.getPosition().x, box1.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			2.f, &font, 25, "PRESS 'SPACE' TO PICK UP THE ITEM.", Color::Black, Color::Black, Color::Black);
+		platform door(&textbox, Vector2f(680.f, 152.f), Vector2f(playerPosition.x + 10.f, playerPosition.y + 300.f));
+		button unlock(Vector2f(box1.body.getPosition().x, box1.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, ("FIND " + to_string(5 - key) + " MORE KEYS TO OPEN."), Color::Black, Color::Black, Color::Black);
 
 		//menu;
 		if (state == MENU)
@@ -438,7 +448,7 @@ int main()
 				if (sf::Mouse::isButtonPressed(Mouse::Left))
 				{
 					window.clear();
-					player.setPosition(Vector2f(1125.0f, 595.0f));
+					player.body.setPosition(Vector2f(1125.0f, 595.0f));
 					player.setAnimationRow(4);
 					state = HOME;
 				}
@@ -476,6 +486,11 @@ int main()
 			//stage 1;
 			if (state == HOME)
 			{
+				//update GUI;
+				gui.updateStatus(deltaTime, windowSize, playerPosition);
+				gui.updateCoin(deltaTime, windowSize, playerPosition);
+				gui.updateWandState(deltaTime, windowSize, playerPosition);
+
 				//update entities;
 				player.update(deltaTime);
 
@@ -493,10 +508,10 @@ int main()
 				background1.draw(window);
 
 				//draw items;
-				if (wandState == UNOBTAINED)
+				if (wandLevel == 0)
 				{
 					wand.draw(window);
-					if (player.getGlobalBounds().intersects(pickUp.getGlobalBounds()))
+					if (player.body.getGlobalBounds().intersects(pickUp.getGlobalBounds()))
 					{
 						box1.draw(window);
 						pickItUp.update(mousePos);
@@ -507,14 +522,19 @@ int main()
 				//draw player;
 				player.draw(window);
 
-				//wand discovery
-				if (player.getGlobalBounds().intersects(pickUp.getGlobalBounds())) if (Keyboard::isKeyPressed(Keyboard::Space)) wandState = REGULAR;
+				//draw GUI;
+				gui.drawStatus(window);
+				gui.drawCoin(window);
+				gui.drawWandState(window);
+
+				//wand discovery;
+				if (player.body.getGlobalBounds().intersects(pickUp.getGlobalBounds())) if (Keyboard::isKeyPressed(Keyboard::Space)) wandLevel = 1;
 
 				//go outside;
-				if (player.getGlobalBounds().intersects(warperH.getGlobalBounds()))
+				if (player.body.getGlobalBounds().intersects(warperH.getGlobalBounds()))
 				{
 					window.clear();
-					player.setPosition(Vector2f(3720.0f, 5100.0f));
+					player.body.setPosition(Vector2f(3720.0f, 5100.0f));
 					state = OUTDOOR;
 				}
 			}
@@ -522,6 +542,11 @@ int main()
 			//stage 2;
 			if (state == OUTDOOR)
 			{
+				//update GUI;
+				gui.updateStatus(deltaTime, windowSize, playerPosition);
+				gui.updateCoin(deltaTime, windowSize, playerPosition);
+				gui.updateWandState(deltaTime, windowSize, playerPosition);
+
 				//update entities;
 				player.update(deltaTime);
 				/*if (player.getPosition().y >= 5000 && player.getPosition().y <= 6500) normalGargoyle1.updateFly(deltaTime, player.getPosition());
@@ -536,7 +561,7 @@ int main()
 				}
 
 				//set view;
-				view.setCenter(player.getPosition());
+				view.setCenter(playerPosition);
 
 				//clear screen;
 				window.clear(Color(127, 231, 255));
@@ -550,19 +575,24 @@ int main()
 				normalGargoyle2.draw(window);*/
 				player.draw(window);
 
+				//draw GUI;
+				gui.drawStatus(window);
+				gui.drawCoin(window);
+				gui.drawWandState(window);
+
 				//go back inside the house;
-				if (player.getGlobalBounds().intersects(warperO[0].getGlobalBounds()))
+				if (player.body.getGlobalBounds().intersects(warperO[0].getGlobalBounds()))
 				{
 					window.clear();
-					player.setPosition(Vector2f(1255.0f, 1970.0f));
+					player.body.setPosition(Vector2f(1255.0f, 1970.0f));
 					state = HOME;
 				}
 
 				//go up to the sky;
-				if (player.getGlobalBounds().intersects(warperO[1].getGlobalBounds()))
+				if (player.body.getGlobalBounds().intersects(warperO[1].getGlobalBounds()))
 				{
 					window.clear();
-					player.setPosition(Vector2f(1320.0f, 2280.0f));
+					player.body.setPosition(Vector2f(1320.0f, 2280.0f));
 					state = SKY;
 				}
 			}
@@ -570,15 +600,16 @@ int main()
 			//stage 3;
 			if (state == SKY)
 			{
+				//update GUI;
+				gui.updateStatus(deltaTime, windowSize, playerPosition);
+				gui.updateCoin(deltaTime, windowSize, playerPosition);
+				gui.updateWandState(deltaTime, windowSize, playerPosition);
+
 				//update entities;
 				player.update(deltaTime);
 
 				//map collision;
-				for (int i = 0; i < blockS.size(); i++)
-				{
-					if (!collisionCheat) blockS[i].getCollider().checkCollider(playerCollision, 1.0f);
-					//blockS[i].getCollider().checkCollider(playerCollision, 1.0f);
-				}
+				for (int i = 0; i < blockS.size(); i++) if (!collisionCheat) blockS[i].getCollider().checkCollider(playerCollision, 1.0f);
 
 				//set view;
 				view.setCenter(playerPosition);
@@ -586,41 +617,109 @@ int main()
 				//clear screen;
 				window.clear(Color(127, 231, 255));
 				window.setView(view);
-
+				
 				//draw map texture;
 				background3.draw(window);
 
 				//draw entities;
+				if (normalTitan1.isRespawnwed)
+				{
+					normalTitan1.isRespawnwed = false;
+					enemy normalTitan1(&titan1, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateRandom(1150, 900.f)), 0.5f, 200.f, 2500.f, 50);
+					titan1Array.push_back(normalTitan1);
+				}
+				titan1Counter = 0; //hit;
+				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
+				{
+					collider titan1Collision = titan1Array[titan1Counter].getCollider();
+					for (int i = 0; i < blockS.size(); i++) blockS[i].getCollider().checkCollider(titan1Collision, 1.0f);
+
+					if (player.body.getGlobalBounds().intersects(titan1Array[titan1Counter].body.getGlobalBounds()))
+					{
+						player.hurt();
+						if (elapse[1].asSeconds() >= 0.5f)
+						{
+							clock[1].restart();
+							int damage = titan1Array[titan1Counter].damage;
+							dmgDp.text.setString(to_string(damage));
+							dmgDp.text.setPosition(playerPosition);
+							dmgArray.push_back(dmgDp);
+							if (!unlimitedHealthCheat) playerHP -= damage;
+						}
+					}
+					titan1Counter++;
+				}
+				titan1Counter = 0;
+				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
+				{
+					if (titan1Array[titan1Counter].isDead)
+					{
+						titan1Array.erase(titan1Iter);
+						normalTitan1.isRespawnwed = true;
+						break;
+					}
+					titan1Counter++;
+				}
+				titan1Counter = 0;
+				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
+				{
+					titan1Array[titan1Counter].updateWalk(deltaTime);
+					window.draw(titan1Array[titan1Counter].body);
+					titan1Counter++;
+				}
+
 				player.draw(window);
 
+				//draw GUI;
+				gui.drawStatus(window);
+				gui.drawCoin(window);
+				gui.drawWandState(window);
+
 				//go down the beanstalk;
-				if (player.getGlobalBounds().intersects(warperS[0].getGlobalBounds()))
+				if (player.body.getGlobalBounds().intersects(warperS[0].getGlobalBounds()))
 				{
 					window.clear();
-					player.setPosition(Vector2f(1100.0f, 555.0f));
+					player.body.setPosition(Vector2f(1100.0f, 555.0f));
 					state = OUTDOOR;
 				}
 
 				//go into the store;
-				if (player.getGlobalBounds().intersects(warperS[1].getGlobalBounds()))
+				if (player.body.getGlobalBounds().intersects(warperS[1].getGlobalBounds()))
 				{
 					window.clear();
+					player.body.setPosition(windowSize / 2.f);
+					buttonState = IDLE;
 					state = STORE;
 				}
 
 				//go inside the castle;
-				if (player.getGlobalBounds().intersects(warperS[2].getGlobalBounds()))
+				if (key == 5) isUnlocked = true;
+				if (player.body.getGlobalBounds().intersects(warperS[2].getGlobalBounds()))
 				{
-					window.clear();
-					player.setPosition(Vector2f(-700.f, 400.f));
-					player.setAnimationRow(6);
-					state = CASTLE;
+					if (isUnlocked)
+					{
+						window.clear();
+						player.body.setPosition(Vector2f(-700.f, 400.f));
+						player.setAnimationRow(6);
+						state = CASTLE;
+					}
+					if (!isUnlocked)
+					{
+						door.draw(window);
+						unlock.update(mousePos);
+						unlock.draw(window);
+					}
 				}
 			}
 
 			//stage 4;
 			if (state == CASTLE)
 			{
+				//update GUI;
+				gui.updateStatus(deltaTime, windowSize, playerPosition);
+				gui.updateCoin(deltaTime, windowSize, playerPosition);
+				gui.updateWandState(deltaTime, windowSize, playerPosition);
+
 				//update entities;
 				if (!gravityCheat) player.updateBossFight(deltaTime);
 				else player.update(deltaTime);
@@ -642,11 +741,20 @@ int main()
 
 				//draw entities;
 				player.draw(window);
+
+				//draw GUI;
+				gui.drawStatus(window);
+				gui.drawCoin(window);
+				gui.drawWandState(window);
 			}
 
 			//store;
 			if (state == STORE)
 			{
+				//update GUI;
+				gui.updateCoin(deltaTime, windowSize, playerPosition);
+				gui.updateWandState(deltaTime, windowSize, playerPosition);
+
 				//update entities;
 				seller.updateStill(deltaTime);
 
@@ -693,6 +801,10 @@ int main()
 					returnToTheGame.draw(window);
 				}
 
+				//draw GUI;
+				gui.drawCoin(window);
+				gui.drawWandState(window);
+
 				//buying potions;
 				if (smallPotion.getGlobalBounds().contains(mousePos))
 				{
@@ -737,17 +849,8 @@ int main()
 					if (sf::Mouse::isButtonPressed(Mouse::Left))
 					{
 						buttonState = BOUGHT;
-						wandState = KINDA_GOOD;
-						playerMoney -= 700;
-					}
-				}
-				if (betterWand.getGlobalBounds().contains(mousePos))
-				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						buttonState = BOUGHT;
-						wandState = OP;
-						playerMoney -= 2000;
+						wandLevel++;
+						playerMoney -= 500;
 					}
 				}
 
@@ -762,7 +865,7 @@ int main()
 					if (sf::Mouse::isButtonPressed(Mouse::Left))
 					{
 						window.clear();
-						player.setPosition(Vector2f(900.f, 1140.f));
+						player.body.setPosition(Vector2f(900.f, 1140.f));
 						player.setAnimationRow(2);
 						player.direction = DOWN;
 						state = SKY;
@@ -774,36 +877,59 @@ int main()
 			if (state == HOME || state == OUTDOOR || state == SKY || state == CASTLE)
 			{
 				//update player's stats
-				playerHP += 0.5f * deltaTime;
+				playerHP += 0.1f * deltaTime;
 				playerMP += 1.f * deltaTime;
+				if (player.hp <= 0) isPlayerDead = true;
 
 				//draw bullets;
-				if (wandState == REGULAR)
+				if (wandLevel != 0)
 				{
-					if (elapse[1].asSeconds() >= 0.2)
+					if (Keyboard::isKeyPressed(Keyboard::Space) && playerMP > 0)
 					{
-						clock[1].restart();
-						if (Keyboard::isKeyPressed(Keyboard::Space) && playerMP > 0)
+						if (elapse[2].asSeconds() >= 0.5)
 						{
+							clock[2].restart();
 							bullet.body.setPosition(playerPosition);
 							bullet.direction = player.direction;
 							projectileArray.push_back(bullet);
 							if (!unlimitedManaCheat) playerMP -= 3.f;
 						}
 					}
-					int bulletCounter = 0;
+
+					bulletCounter = 0;
 					for (bulletIter = projectileArray.begin(); bulletIter != projectileArray.end();bulletIter++)
 					{
-						projectileArray[bulletCounter].update(deltaTime);
-						window.draw(projectileArray[bulletCounter].body);
-						if (state == HOME) for (int i = 0; i < blockH.size(); i++) if (blockH[i].getGlobalBounds().intersects(projectileArray[bulletCounter].body.getGlobalBounds())) projectileArray[bulletCounter].isCollided = true;
+						if (state == HOME && !collisionCheat) for (int i = 0; i < blockH.size(); i++) if (blockH[i].getGlobalBounds().intersects(projectileArray[bulletCounter].body.getGlobalBounds())) projectileArray[bulletCounter].isCollided = true;
 						if (state == OUTDOOR)
 						{
-							for (int i = 0; i < blockO0.size(); i++) if (blockO0[i].getGlobalBounds().intersects(projectileArray[bulletCounter].body.getGlobalBounds())) projectileArray[bulletCounter].isCollided = true;
+
 						}
 						if (state == SKY)
 						{
-							for (int i = 0; i < blockS.size(); i++) if (blockS[i].getGlobalBounds().intersects(projectileArray[bulletCounter].body.getGlobalBounds())) projectileArray[bulletCounter].isCollided = true;
+							titan1Counter = 0;
+							for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
+							{
+								if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(titan1Array[titan1Counter].body.getGlobalBounds()))
+								{
+									projectileArray[bulletCounter].isCollided = true;
+									titan1Array[titan1Counter].body.setFillColor(Color::Red);
+									int damage = projectileArray[bulletCounter].damage * wandLevel;
+									dmgDp.text.setString(to_string(damage));
+									dmgDp.text.setPosition(titan1Array[titan1Counter].body.getPosition());
+									dmgArray.push_back(dmgDp);
+									titan1Array[titan1Counter].hp -= damage;
+									if (titan1Array[titan1Counter].hp <= 0.f)
+									{
+										titan1Array[titan1Counter].isDead = true;
+										playerScore += 500;
+									}
+								}
+								titan1Counter++;
+							}
+						}
+						if (state == CASTLE && !collisionCheat)
+						{
+
 						}
 						if (projectileArray[bulletCounter].isCollided)
 						{
@@ -813,13 +939,26 @@ int main()
 						bulletCounter++;
 					}
 
-					/*if (wandState == KINDA_GOOD)
+					bulletCounter = 0;
+					for (bulletIter = projectileArray.begin(); bulletIter != projectileArray.end();bulletIter++)
 					{
+						projectileArray[bulletCounter].update(deltaTime);
+						window.draw(projectileArray[bulletCounter].body);
+						bulletCounter++;
 					}
-					if (wandState == OP)
-					{
-					}*/
 
+				}
+				dmgCounter = 0;
+				for (dmgIter = dmgArray.begin(); dmgIter != dmgArray.end();dmgIter++)
+				{
+					dmgArray[dmgCounter].update(deltaTime);
+					window.draw(dmgArray[dmgCounter].text);
+					if (dmgArray[dmgCounter].destroy)
+					{
+						dmgArray.erase(dmgIter);
+						break;
+					}
+					dmgCounter++;
 				}
 
 				//buffs;
@@ -829,48 +968,51 @@ int main()
 				if (Keyboard::isKeyPressed(Keyboard::Num1) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
 					collisionCheat = true;
-					cout << "collision cheat activated!\t";
+					cout << "collision cheat activated!" << endl;
 
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Num1) && Keyboard::isKeyPressed(Keyboard::End))
 				{
 					collisionCheat = false;
-					cout << "collision cheat deactivated!\t";
+					cout << "collision cheat deactivated!" << endl;
 				}
 
 				if (Keyboard::isKeyPressed(Keyboard::Num2) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
 					gravityCheat = true;
-					cout << "flying cheat activated!\t";
+					cout << "flying cheat activated!" << endl;
 
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Num2) && Keyboard::isKeyPressed(Keyboard::End))
 				{
 					gravityCheat = false;
-					cout << "flying cheat cheat deactivated!\t";
+					cout << "flying cheat cheat deactivated!" << endl;
 				}
 
 				if (Keyboard::isKeyPressed(Keyboard::Num3) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
 					unlimitedHealthCheat = true;
-					cout << "invincible mode activated!\t";
+					cout << "invincible mode activated!" << endl;
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Num3) && Keyboard::isKeyPressed(Keyboard::End))
 				{
 					unlimitedHealthCheat = false;
-					cout << "invincible mode deactivated!\t";
+					cout << "invincible mode deactivated!" << endl;
 				}
 
 				if (Keyboard::isKeyPressed(Keyboard::Num4) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
 					unlimitedManaCheat = true;
-					cout << "gatling mode activated!\t";
+					cout << "gatling mode activated!" << endl;
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Num4) && Keyboard::isKeyPressed(Keyboard::End))
 				{
 					unlimitedManaCheat = false;
-					cout << "gatling mode deactivated!\t";
+					cout << "gatling mode deactivated!" << endl;
 				}
+
+				if (Keyboard::isKeyPressed(Keyboard::Up) && Keyboard::isKeyPressed(Keyboard::K)) key = 5;
+				if (Keyboard::isKeyPressed(Keyboard::Down) && Keyboard::isKeyPressed(Keyboard::K)) key = 0;
 
 				if (Keyboard::isKeyPressed(Keyboard::R) && Keyboard::isKeyPressed(Keyboard::I) && Keyboard::isKeyPressed(Keyboard::P))
 				{
@@ -887,35 +1029,39 @@ int main()
 
 			//pause;
 			if (Keyboard::isKeyPressed(Keyboard::Escape)) isPause = true;
-			if (isPause)
+		}
+
+		//pause menu;
+		if (isPause)
+		{
+			//update buttons;
+			resume.update(mousePos);
+			toMenu.update(mousePos);
+
+			//set view;
+			view.setCenter(windowSize / 2.f);
+			window.clear();
+			window.setView(view);
+
+			//draw buttons;
+			resume.draw(window);
+			toMenu.draw(window);
+
+			if (resume.getGlobalBounds().contains(mousePos)) if (sf::Mouse::isButtonPressed(Mouse::Left)) isPause = false;
+
+			//restart;
+			if (toMenu.getGlobalBounds().contains(mousePos))
 			{
-				//update buttons;
-				resume.update(mousePos);
-				toMenu.update(mousePos);
-
-				//set view;
-				view.setCenter(windowSize / 2.f);
-				window.clear();
-				window.setView(view);
-
-				//draw buttons;
-				resume.draw(window);
-				toMenu.draw(window);
-
-				if (resume.getGlobalBounds().contains(mousePos)) if (sf::Mouse::isButtonPressed(Mouse::Left)) isPause = false;
-
-				if (toMenu.getGlobalBounds().contains(mousePos))
+				if (sf::Mouse::isButtonPressed(Mouse::Left))
 				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						window.clear();
-						state = MENU;
-						isPause = false;
-						wandState = UNOBTAINED;
-						playerMoney = money;
-						playerHP = maxHP;
-						playerMP = maxMP;
-					}
+					window.clear();
+					state = MENU;
+					wandLevel = 0;
+					isPause = false;
+					playerScore = 0;
+					playerMoney = 0;
+					playerHP = maxHP;
+					playerMP = maxMP;
 				}
 			}
 		}
@@ -955,6 +1101,11 @@ int main()
 				{
 					window.clear();
 					state = MENU;
+					wandLevel = 0;
+					playerScore = 0;
+					playerMoney = 0;
+					playerHP = maxHP;
+					playerMP = maxMP;
 				}
 			}
 

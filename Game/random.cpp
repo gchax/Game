@@ -1,18 +1,18 @@
 #include "random.h"
 
-int generateRandom(int max)
+int generateRandom(int max, float start)
 {
 	int randomNumber = rand();
-	float random = (randomNumber % max) + 1;
+	float random = (randomNumber % max) + start;
 	int myRandom = random;
 
 	return myRandom;
 }
 
-int generateRandom0(int max)
+int generateIntRandom(int max, int start)
 {
 	int randomNumber = rand();
-	float random = (randomNumber % max) + 1;
+	float random = (randomNumber % max) + start;
 	int myRandom = random;
 
 	return myRandom;

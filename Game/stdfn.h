@@ -6,11 +6,21 @@
 #include <SFML\Window.hpp>
 #include <iostream>
 #include <ctime>
+#include <random>
+#include <string>
+#include "random.h"
 
 using namespace std;
 using namespace sf;
 
-enum directions { UP = 0, DOWN, RIGHT, LEFT };
+enum directions { IDLE = 0, UP, DOWN, RIGHT, LEFT };
 enum states { MENU = 0, HOME, OUTDOOR, SKY, CASTLE, STORE, PAUSE, GAME_OVER, SCORE, CREDIT };
-enum wandStates { UNOBTAINED = 0, REGULAR, KINDA_GOOD, OP };
-enum click { IDLE = 0, BOUGHT, BYE };
+enum click { UNSELECTED = 0, BOUGHT, BYE };
+
+//define global variables;
+static float viewWidght = 1700.f;
+static float viewHeight = 1000.f;
+static unsigned int framerateLimit = 60;
+static float maxHP = 3000.f;
+static float maxMP = 800.f;
+static float gravity = 3000.f;

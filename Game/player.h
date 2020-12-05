@@ -4,35 +4,32 @@
 #include "collider.h"
 #include "projectile.h"
 #include "hitbox.h"
+#include "playerGUI.h"
 
 class player
 {
 public:
-	int direction = UP;
-	float speed;
-	float hp;
-	float mp;
-	int money;
-	float gravity;
-
 	player(Texture* texture, Vector2u imageCount, float switchTime, float speed);
 	~player();
 
+	RectangleShape body;
+	int direction = IDLE;
+	float speed = 0.f;
+	float hp = 0.f;
+	float mp = 0.f;
+	int money = 0;
+	float gravity = 0.f;
+
 	void update(float deltaTime);
 	void updateBossFight(float deltaTime);
+	void hurt();
 	void draw(RenderWindow& window);
 	void onCollision(Vector2f direction);
-	void setPosition(Vector2f(xy)) { body.setPosition(xy); };
-	void setSize(Vector2f(wh)) { body.setSize(wh); };
 	void setAnimationRow(unsigned int r) { row = r; }
-	void move(Vector2f(ab)) { body.move(ab); }
 
-	Vector2f getPosition() { return body.getPosition(); }
-	FloatRect getGlobalBounds() { return body.getGlobalBounds(); }
 	collider getCollider() { return collider(body); }
 
 private:
-	RectangleShape body;
 	animation animation;
 	unsigned int row;
 

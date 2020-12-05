@@ -45,10 +45,13 @@
     <ClCompile Include="hitbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cloudEnemy.cpp">
+    <ClCompile Include="button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="button.cpp">
+    <ClCompile Include="playerGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="damageDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,10 +86,13 @@
     <ClInclude Include="hitbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cloudEnemy.h">
+    <ClInclude Include="button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="button.h">
+    <ClInclude Include="playerGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="damageDisplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
