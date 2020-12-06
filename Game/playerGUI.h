@@ -10,6 +10,7 @@ public:
 	void updateStatus(float deltaTime, Vector2f windowSize, Vector2f playerPosition);
 	void updateWandState(float deltaTime, Vector2f windowSize, Vector2f playerPosition);
 	void updateCoin(float deltaTime, Vector2f windowSize, Vector2f playerPosition);
+	void updateCastle(float deltaTime, Vector2f windowSize);
 	void drawStatus(RenderWindow& window);
 	void drawWandState(RenderWindow& window);
 	void drawCoin(RenderWindow& window);

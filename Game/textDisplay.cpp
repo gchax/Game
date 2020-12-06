@@ -1,13 +1,13 @@
-#include "damageDisplay.h"
+#include "textDisplay.h"
 
-damageDisplay::damageDisplay()
+textDisplay::textDisplay(Color textColor)
 {
-	text.setFillColor(Color::Red);
+	text.setFillColor(textColor);
 	text.setCharacterSize(25);
 	text.setOrigin(text.getLocalBounds().width / 2.f, text.getLocalBounds().height / 2.f);
 }
 
-void damageDisplay::update(float deltaTime)
+void textDisplay::update(float deltaTime)
 {
 	text.move(0.f, -speed * deltaTime);
 	counter++;

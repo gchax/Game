@@ -1,28 +1,28 @@
 #include "random.h"
 
-int generateRandom(int max, float start)
+int chance(int denomenator)
 {
 	int randomNumber = rand();
-	float random = (randomNumber % max) + start;
-	int myRandom = random;
+	float random = (randomNumber % denomenator);
+	int intRandom = random;
 
-	return myRandom;
+	return intRandom;
 }
 
-int generateIntRandom(int max, int start)
+int generateIntRandom(int range, int start)
 {
 	int randomNumber = rand();
-	float random = (randomNumber % max) + start;
-	int myRandom = random;
+	float random = (randomNumber % range) + start;
+	int intRandom = random;
 
-	return myRandom;
+	return intRandom;
 }
 
 bool generateRandomBoolean()
 {
 	int randomNumber = rand();
 	float random = (randomNumber % 2) + 1;
-	int myRandom = random;
-	if (myRandom == 1) return true;
+	int intRandom = random;
+	if (intRandom == 1) return true;
 	else return false;
 }

@@ -2,6 +2,6 @@
 #include "stdfn.h"
 #include <time.h>
 
-int generateRandom(int max, float start);
-int generateIntRandom(int max, int start);
+int chance(int denomenator);
+int generateIntRandom(int range, int start);
 bool generateRandomBoolean();

@@ -22,9 +22,9 @@
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="collider.cpp" />
-    <ClCompile Include="damageDisplay.cpp" />
+    <ClCompile Include="item.cpp" />
+    <ClCompile Include="textDisplay.cpp" />
     <ClCompile Include="enemy.cpp" />
-    <ClCompile Include="hitbox.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="bitmap.cpp" />
     <ClCompile Include="platform.cpp" />
@@ -38,9 +38,9 @@
     <ClInclude Include="button.h" />
     <ClInclude Include="collider.h" />
     <ClInclude Include="bitmap.h" />
-    <ClInclude Include="damageDisplay.h" />
+    <ClInclude Include="item.h" />
+    <ClInclude Include="textDisplay.h" />
     <ClInclude Include="enemy.h" />
-    <ClInclude Include="hitbox.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="playerGUI.h" />

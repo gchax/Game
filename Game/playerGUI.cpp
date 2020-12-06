@@ -54,7 +54,7 @@ void playerGUI::updateStatus(float deltaTime, Vector2f windowSize, Vector2f play
 	this->mpBarBase.setPosition(playerPosition.x - windowSize.x / 2.f + 20.f, playerPosition.y - windowSize.y / 2.f + 80.f);
 	this->mpAmount.setPosition(this->mpBarBase.getPosition());
 	this->Score.setOrigin(this->Score.getLocalBounds().width / 2.f, 0.f);
-	this->Score.setPosition(playerPosition.x/* + windowSize.x / 2.f - 20.f*/, playerPosition.y - windowSize.y / 2.f + 20.f);
+	this->Score.setPosition(playerPosition.x, playerPosition.y - windowSize.y / 2.f + 20.f);
 
 	float hpPercentage = hp / maxHP;
 	float hpDisplay = static_cast<float>(std::floor(this->barMaxWidth * hpPercentage));
@@ -82,6 +82,35 @@ void playerGUI::updateCoin(float deltaTime, Vector2f windowSize, Vector2f player
 {
 	this->Money.setOrigin(this->Money.getLocalBounds().width, 0.f);
 	this->Money.setPosition(playerPosition.x + windowSize.x / 2.f - 20.f, playerPosition.y - windowSize.y / 2.f + 20.f);
+}
+
+void playerGUI::updateCastle(float deltaTime, Vector2f windowSize)
+{
+	float hpPercentage = hp / maxHP;
+	float hpDisplay = static_cast<float>(std::floor(this->barMaxWidth * hpPercentage));
+	if (hpDisplay < 0) hpDisplay = 0;
+	this->hpAmount.setSize((Vector2f(hpDisplay, this->hpAmount.getSize().y)));
+	float mpPercentage = mp / maxMP;
+	float mpDisplay = static_cast<float>(std::floor(this->barMaxWidth * mpPercentage));
+	if (mpDisplay < 0) mpDisplay = 0;
+	this->mpAmount.setSize((Vector2f(mpDisplay, this->mpAmount.getSize().y)));
+
+	string state;
+	if (wand == 0) state = "";
+	else if (wand > 0 && wand < 60) state = "WAND LEVEL: " + to_string(this->wand);
+	else if (wand == 60) state = "WAND LEVEL: MAX";
+
+	this->hpBarBase.setPosition(20.f - windowSize.x / 2.f, 20.f - windowSize.y / 2.f);
+	this->hpAmount.setPosition(this->hpBarBase.getPosition());
+	this->mpBarBase.setPosition(20.f - windowSize.x / 2.f, 80.f - windowSize.y / 2.f);
+	this->mpAmount.setPosition(this->mpBarBase.getPosition());
+	this->Score.setOrigin(this->Score.getLocalBounds().width / 2.f, 0.f);
+	this->Score.setPosition(0.f, 20.f - windowSize.y / 2.f);
+	this->wandLevel.setString(state);
+	this->wandLevel.setOrigin(this->wandLevel.getLocalBounds().width, 0.f);
+	this->wandLevel.setPosition(windowSize.x / 2.f - 20.f, 70.f - windowSize.y / 2.f);
+	this->Money.setOrigin(this->Money.getLocalBounds().width, 0.f);
+	this->Money.setPosition(windowSize.x / 2.f - 20.f, 20.f - windowSize.y / 2.f);
 }
 
 void playerGUI::drawStatus(RenderWindow& window)

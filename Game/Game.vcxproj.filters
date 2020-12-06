@@ -42,16 +42,16 @@
     <ClCompile Include="random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hitbox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="playerGUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="damageDisplay.cpp">
+    <ClCompile Include="textDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,16 +83,16 @@
     <ClInclude Include="random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hitbox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="playerGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="damageDisplay.h">
+    <ClInclude Include="textDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

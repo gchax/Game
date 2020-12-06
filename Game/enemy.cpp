@@ -62,7 +62,7 @@ void enemy::updateWalk(float deltaTime)
 	counter++;
 	if (counter >= 300)
 	{
-		direction = generateRandom(10, 0);
+		direction = generateIntRandom(10, 0);
 		counter = 0;
 	}
 

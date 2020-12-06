@@ -1,5 +1,6 @@
 #pragma once
 #include "stdfn.h"
+#include "animation.h"
 #include "collider.h"
 
 class projectile
@@ -17,4 +18,8 @@ public:
 	void draw(RenderWindow& window);
 
 	collider getCollider() { return collider(body); }
+
+private:
+	animation animation;
+	unsigned int row = 0;
 };
