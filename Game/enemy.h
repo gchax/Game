@@ -12,6 +12,7 @@ public:
 	bool isDead = false;
 	bool isRespawned = false;
 	bool isAggroed = false;
+	bool shoot = false;
 	int action = 0;
 	int effectLifetime = 0;
 	float hp;
@@ -22,11 +23,11 @@ public:
 	~enemy();
 
 	void updateStill(float deltaTime);
+	void updateFly(float deltaTime);
 	void updateAggroedFly(float deltaTime, Vector2f playerPosition);
-	void updateWalk(float deltaTime, Vector2f playerPosition);
+	void updateWalk(float deltaTime);
 	void updateAggrovated(float deltaTime, Vector2f playerPosition);
 	void updateBoss(float deltaTime);
-	void hurt();
 	void draw(RenderWindow& window);
 
 	collider getCollider() { return collider(body); }

@@ -26,14 +26,30 @@ void enemy::updateStill(float deltaTime)
 	body.setTextureRect(animation.uvRect);
 }
 
-void enemy::updateAggroedFly(float deltaTime, Vector2f playerPosition)
+void enemy::updateFly(float deltaTime)
 {
-	animation.update(0, deltaTime);
+	if (body.getPosition().x >= 0 && body.getPosition().x <= 900) row = 0;
+	else row = 1;
+
+	animation.update(row, deltaTime);
 	body.setTextureRect(animation.uvRect);
-	body.setPosition(position.x, playerPosition.y);
 }
 
-void enemy::updateWalk(float deltaTime, Vector2f playerPosition)
+void enemy::updateAggroedFly(float deltaTime, Vector2f playerPosition)
+{
+	if (action == 1)
+	{
+		if (body.getPosition().y > playerPosition.y) body.move(0, -speed * deltaTime);
+		else body.move(0, speed * deltaTime);
+	}
+	if (body.getPosition().x >= 0 && body.getPosition().x <= 900) row = 0;
+	else row = 1;
+
+	animation.update(row, deltaTime);
+	body.setTextureRect(animation.uvRect);
+}
+
+void enemy::updateWalk(float deltaTime)
 {
 	if (direction == IDLE);
 	if (direction == UP) body.move(0, -speed * deltaTime);
@@ -67,12 +83,14 @@ void enemy::updateAggrovated(float deltaTime, Vector2f playerPosition)
 		if (body.getPosition().x > playerPosition.x)
 		{
 			body.move(-speed * deltaTime, 0);
-			row = 0;
+			if (shoot) row = 1;
+			else row = 0;
 		}
 		else
 		{
 			body.move(speed * deltaTime, 0);
-			row = 2;
+			if (shoot) row = 3;
+			else row = 2;
 		}
 		if (body.getPosition().y > playerPosition.y) body.move(0, -speed * deltaTime);
 		else body.move(0, speed * deltaTime);

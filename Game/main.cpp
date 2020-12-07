@@ -16,7 +16,7 @@ void resizeView(const RenderWindow&, View&);
 int main()
 {
 	//render window;
-	RenderWindow window(VideoMode(viewWidght, viewHeight), "Jack!", Style::Close | Style::Resize);
+	RenderWindow window(VideoMode(viewWidght, viewHeight), "Jack!", Style::Close | Style::Fullscreen);
 	View view(Vector2f(0.0f, 0.0f), Vector2f(viewWidght, viewHeight));
 	window.setFramerateLimit(framerateLimit);
 	srand(time(NULL));
@@ -33,7 +33,7 @@ int main()
 
 
 	//initialize variables;
-	int state = SKY;
+	int state = CASTLE;
 	bool isHurt = false;
 	bool isPause = false;
 	bool isSpawned = false;
@@ -45,7 +45,7 @@ int main()
 	bool unlimitedHealthCheat = false;
 	bool useHpPotion = false;
 	bool useMpPotion = false;
-	int wandLevel = 60;
+	int wandLevel = 0;
 	int key = 0;
 	int playerScore = 0;
 	int playerMoney = 0;
@@ -64,10 +64,80 @@ int main()
 	Texture MPP;
 	MPP.loadFromFile("mpp.jpg");
 
-
-	//initialize player;
 	Texture jack;
 	jack.loadFromFile("jack.png");
+
+	Texture menubg;
+	menubg.loadFromFile("jab.jpg");
+
+	Texture jacklogo;
+	jacklogo.loadFromFile("logo.png");
+
+	Texture homebg;
+	homebg.loadFromFile("map_home.png");
+
+	Texture outdoorbg;
+	outdoorbg.loadFromFile("map_outdoor.png");
+
+	Texture skybg;
+	skybg.loadFromFile("map_sky.png");
+
+	Texture mapCastle;
+	mapCastle.loadFromFile("map_castle.png");
+
+	Texture storebg;
+	storebg.loadFromFile("shopbg.jpg");
+
+	Texture textbox;
+	textbox.loadFromFile("textbox.png");
+
+	Texture awand;
+	awand.loadFromFile("sparkle.png");
+
+	Texture coins;
+	coins.loadFromFile("coin.png");
+
+	Texture fireball;
+	fireball.loadFromFile("fireball.png");
+
+	Texture hp;
+	hp.loadFromFile("hp.png");
+
+	Texture mp;
+	mp.loadFromFile("mp.png");
+
+	Texture keys;
+	keys.loadFromFile("key.png");
+
+	Texture gargoyle1;
+	gargoyle1.loadFromFile("gargoyle1.png");
+
+	Texture gargoyle1Ball;
+	gargoyle1Ball.loadFromFile("ballg1.png");
+
+	Texture gargoyle2;
+	gargoyle2.loadFromFile("gargoyle2.png");
+
+	Texture gargoyle2Ball;
+	gargoyle2Ball.loadFromFile("ballg2.png");
+
+	Texture titan1;
+	titan1.loadFromFile("titan1.png");
+
+	Texture titan2;
+	titan2.loadFromFile("titan2.png");
+
+	Texture titan2Ball;
+	titan2Ball.loadFromFile("ballt2.png");
+
+	Texture monSeller;
+	monSeller.loadFromFile("mon_seller.png");
+
+	Texture theboss;
+	theboss.loadFromFile("boss.png");
+
+
+	//initialize player;
 	player player(&jack, Vector2u(8, 8), 0.07f, 600.0f);
 
 
@@ -77,16 +147,10 @@ int main()
 
 
 	//initialzie map variables;
-	Texture menubg;
-	menubg.loadFromFile("jab.jpg");
 	platform background(&menubg, Vector2f(windowSize), Vector2f(windowSize / 2.f));
 
-	Texture jacklogo;
-	jacklogo.loadFromFile("logo.png");
 	platform logo(&jacklogo, Vector2f(621.f, 252.f), Vector2f(windowSize.x / 2.f, windowSize.y / 3.f));
 
-	Texture homebg;
-	homebg.loadFromFile("map_home.png");
 	platform background1(&homebg, Vector2f(1800.0f, 2070.0f), Vector2f(900.0f, 1035.f));
 	vector<bitmap> blockH;
 	int home[23][20] =
@@ -127,8 +191,6 @@ int main()
 		}
 	}
 
-	Texture outdoorbg;
-	outdoorbg.loadFromFile("map_outdoor.png");
 	platform background2(&outdoorbg, Vector2f(4920.0f, 5880.0f), Vector2f(2460.0f, 2940.0f));
 	vector<bitmap> blockO0;
 	vector<bitmap> blockO2;
@@ -201,8 +263,6 @@ int main()
 		}
 	}
 
-	Texture skybg;
-	skybg.loadFromFile("map_sky.png");
 	platform background3(&skybg, Vector2f(7920.0f, 2640.0f), Vector2f(3960.0f, 1320.0f));
 	vector<bitmap> blockS;
 	int sky[22][66] =
@@ -242,18 +302,13 @@ int main()
 		}
 	}
 
-	Texture mapCastle;
-	mapCastle.loadFromFile("map_castle.png");
 	platform castle(&mapCastle, Vector2f(5242.72f, 1080.0f), Vector2f(0.f, -50.f));
 	vector<platform> platforms;
 	platforms.push_back(platform(nullptr, Vector2f(5242.72f, 1.f), Vector2f(0.f, 400.f)));
 
-	Texture storebg;
-	storebg.loadFromFile("");
-	//platform background(&storebg, Vector2f(), Vector2f(0.f, 0.f));
+	platform store(&storebg, Vector2f(1920.f, 1080.f), Vector2f(960.f, 540.f));
+	store.body.setFillColor(Color(150, 150, 150, 150));
 
-	Texture textbox;
-	textbox.loadFromFile("textbox.png");
 	platform box2(&textbox, Vector2f(1700.f, 380.f), Vector2f(windowSize.x / 2.f, 7.f * windowSize.y / 10.f));
 
 
@@ -283,25 +338,25 @@ int main()
 
 	//initialize button variables;
 	button startGame(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 35, "START", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		2.f, &font, 45, "START", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	startGame.setTextOutlineColor(Color::Black);
-	startGame.setTextOutlineThickness(1);
+	startGame.setTextOutlineThickness(2);
 	button score(Vector2f(windowSize.x / 2.f, 4.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 35, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		2.f, &font, 45, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	score.setTextOutlineColor(Color::Black);
-	score.setTextOutlineThickness(1);
+	score.setTextOutlineThickness(2);
 	button tutorial(Vector2f(windowSize.x / 2.f, 5.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 35, "TUTORIAL", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		2.f, &font, 45, "TUTORIAL", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	tutorial.setTextOutlineColor(Color::Black);
-	tutorial.setTextOutlineThickness(1);
+	tutorial.setTextOutlineThickness(2);
 	button credit(Vector2f(windowSize.x / 2.f, 5.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 35, "CREDITS", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		2.f, &font, 45, "CREDITS", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	credit.setTextOutlineColor(Color::Black);
-	credit.setTextOutlineThickness(1);
+	credit.setTextOutlineThickness(2);
 	button exitGame(Vector2f(windowSize.x / 2.f, 6.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 35, "EXIT", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		2.f, &font, 45, "EXIT", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
 	exitGame.setTextOutlineColor(Color::Black);
-	exitGame.setTextOutlineThickness(1);
+	exitGame.setTextOutlineThickness(2);
 
 	string what_do_you_want[5] = { "How shall I serve thee, master?","What is it that you desire?","What is the purpose of thy presence?","Want some power-ups?","Ye shall only find good stuff here" };
 	string bought[3] = { "Thank you, kind sir!\n    Anything else?", "Anything else?", "  Good choice!\nAnything else?" };
@@ -343,85 +398,90 @@ int main()
 
 
 	//initialize items;
-	Texture awand;
-	awand.loadFromFile("sparkle.png");
 	item wand(&awand, Vector2u(1, 1), Vector2f(120.f, 120.f));
 	wand.body.setPosition(Vector2f(945.0f, 1400.0f));
 
-	Texture coins;
-	coins.loadFromFile("coin.png");
 	item coin(&coins, Vector2u(6, 1), Vector2f(60.f, 60.f));
 	vector<item>::const_iterator coinIter;
 	vector<item> coinArray;
 
-	Texture fireball;
-	fireball.loadFromFile("fireball.png");
 	projectile bullet(&fireball, 1000.f, 100.f);
 	vector<projectile>::const_iterator bulletIter;
 	vector<projectile> projectileArray;
 
-	Texture hp;
-	hp.loadFromFile("hp.png");
 	item hpp(&hp, Vector2u(1, 1), Vector2f(55.f, 72.5f));
 	vector<item>::const_iterator hppIter;
 	vector<item> hppArray;
 
-	Texture mp;
-	mp.loadFromFile("mp.png");
 	item mpp(&mp, Vector2u(1, 1), Vector2f(40.f, 77.5f));
 	vector<item>::const_iterator mppIter;
 	vector<item> mppArray;
-	
-	Texture keys;
-	keys.loadFromFile("key.png");
+
 	item Key(&keys, Vector2u(1, 1), Vector2f(44.f, 21.5f));
 	vector<item>::const_iterator keyIter;
 	vector<item> keyArray;
 
 
 	//initialize enemies;
-	Texture gargoyle1;
-	gargoyle1.loadFromFile("gargoyle1.png");
-	Texture gargoyle1Ball;
-	gargoyle1Ball.loadFromFile("ballg1.png");
-	enemy normalGargoyle1(&gargoyle1, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2000.f, 15);
-
-	Texture gargoyle2;
-	gargoyle2.loadFromFile("gargoyle2.png");
-	Texture gargoyle2Ball;
-	gargoyle2Ball.loadFromFile("ballg2.png");
-	enemy toughGargoyle1(&gargoyle2, Vector2u(5, 4), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2500.f, 25);
-
-	Texture titan1;
-	titan1.loadFromFile("titan1.png");
-	enemy normalTitan1(&titan1, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 200.f, 2000.f, 30);
-	vector<enemy>::const_iterator titan1Iter;
-	vector<enemy> titan1Array;
+	enemy normalGargoyle(&gargoyle1, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(generateIntRandom(500, 100), generateIntRandom(2300, 700)), 0.1f, 180.f, 500.f, 15);
+	vector<enemy>::const_iterator gargoyle1Iter;
+	vector<enemy> gargoyle1Array;
 	for (int i = 0;i < 7;i++)
 	{
-		titan1Array.push_back(normalTitan1);
-		normalTitan1.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+		gargoyle1Array.push_back(normalGargoyle);
+		normalGargoyle.body.setPosition(generateIntRandom(500, 100), generateIntRandom(2300, 700));
 	}
+	for (int i = 0;i < 8;i++)
+	{
+		gargoyle1Array.push_back(normalGargoyle);
+		normalGargoyle.body.setPosition(generateIntRandom(500, 1500), generateIntRandom(2300, 700));
+	}
+	projectile gargoyle1Bullet(&gargoyle1Ball, 1000.f, 30.f);
+	vector<projectile>::const_iterator gargoyle1BulletIter;
+	vector<projectile> gargoyle1BulletArray;
 
-	Texture titan2;
-	titan2.loadFromFile("titan2.png");
-	Texture titan2Ball;
-	titan2Ball.loadFromFile("ballt2.png");
+	enemy advancedGargoyle(&gargoyle2, Vector2u(5, 2), Vector2f(348.f, 372.f), Vector2f(generateIntRandom(500, 100), generateIntRandom(2300, 700)), 0.1f, 250.f, 1500.f, 25);
+	vector<enemy>::const_iterator gargoyle2Iter;
+	vector<enemy> gargoyle2Array;
+	for (int i = 0;i < 2;i++)
+	{
+		gargoyle2Array.push_back(advancedGargoyle);
+		advancedGargoyle.body.setPosition(generateIntRandom(500, 0), generateIntRandom(2300, 700));
+	}
+	for (int i = 0;i < 3;i++)
+	{
+		gargoyle2Array.push_back(advancedGargoyle);
+		advancedGargoyle.body.setPosition(generateIntRandom(500, 1600), generateIntRandom(2300, 700));
+	}
+	projectile gargoyle2Bullet(&gargoyle2Ball, 1000.f, 30.f);
+	vector<projectile>::const_iterator gargoyle2BulletIter;
+	vector<projectile> gargoyle2BulletArray;
+
+	enemy normalTitan(&titan1, Vector2u(3, 4), Vector2f(304.f, 400.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 250.f, 2500.f, 30);
+	vector<enemy>::const_iterator titan1Iter;
+	vector<enemy> titan1Array;
+	for (int i = 0;i < 10;i++)
+	{
+		titan1Array.push_back(normalTitan);
+		normalTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+	}
+	enemy advancedTitan(&titan2, Vector2u(3, 4), Vector2f(304.f, 400.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 280.f, 5000.f, 70);
+	vector<enemy>::const_iterator titan2Iter;
+	vector<enemy> titan2Array;
+	for (int i = 0;i < 5;i++)
+	{
+		titan2Array.push_back(advancedTitan);
+		advancedTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+	}
 	projectile titan2Bullet(&titan2Ball, 1000.f, 30.f);
 	vector<projectile>::const_iterator titan2BulletIter;
 	vector<projectile> titan2BulletArray;
-	enemy normalTitan2(&titan2, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 280.f, 5000.f, 70);
-	vector<enemy>::const_iterator titan2Iter;
-	vector<enemy> titan2Array;
-	for (int i = 0;i < 3;i++)
-	{
-		titan2Array.push_back(normalTitan2);
-		normalTitan2.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
-	}
 
-	Texture monSeller;
-	monSeller.loadFromFile("mon_seller.png");
 	enemy seller(&monSeller, Vector2u(2, 1), Vector2f(33.f * 16, 49.f * 16), Vector2f(windowSize.x / 2.f + 432.f, windowSize.y / 2.f - 50.f), 0.8, 0.f, 0.f, 0);
+
+	enemy boss(&theboss, Vector2u(2, 3), Vector2f(850.f, 800.f), Vector2f(0.f, 0.f), 1.f, 1, 1000000, 300);
+
+	int entityValue = 0;
 
 	textDisplay moneyDp(Color::Yellow);
 	moneyDp.text.setFont(font);
@@ -447,10 +507,6 @@ int main()
 	dmgDp.text.setFont(font);
 	vector<textDisplay>::const_iterator dmgIter;
 	vector<textDisplay> dmgArray;
-
-	int entityValue = 0;
-	int titan1Value = generateIntRandom(10, 50);
-	int titan2Value = generateIntRandom(10, 100);
 
 
 	//loop;
@@ -494,8 +550,7 @@ int main()
 		player.gravity = playerGravity;
 		playerGUI gui(&font, &HPP, &MPP, player.hp, maxhp, player.mp, maxmp, hpPotion, mpPotion, player.money, playerScore, wandLevel, key);
 		float atkSpd = 0.4f - wandLevel / 600.f;
-		//cout << "x = " << playerPosition.x << "\ty = " << playerPosition.y << endl;
-		cout << "hpp = " << hpPotion << "mpp = " << mpPotion << endl;
+		cout << "x = " << playerPosition.x << "\ty = " << playerPosition.y << endl;
 
 		//loop counters;
 		int gargoyle1Counter = 0;
@@ -516,6 +571,12 @@ int main()
 		int keyPickUpCounter = 0;
 		int dmgCounter = 0;
 
+		//entities' value;
+		int gargoyle1Value = generateIntRandom(10, 20);
+		int gargoyle2Value = generateIntRandom(10, 50);
+		int titan1Value = generateIntRandom(10, 80);
+		int titan2Value = generateIntRandom(10, 150);
+
 		//textbox;
 		string findKey;
 		if (key != 5) findKey = ("FIND " + to_string(5 - key) + " MORE KEYS TO OPEN.");
@@ -526,8 +587,8 @@ int main()
 		platform door(&textbox, Vector2f(680.f, 152.f), Vector2f(playerPosition.x + 10.f, playerPosition.y + 300.f));
 		button unlock(Vector2f(box1.body.getPosition().x, box1.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
 			2.f, &font, 25, findKey, Color::Black, Color::Black, Color::Black);
-		
-		//menu;
+
+		//menu//
 		if (state == MENU)
 		{
 			//update buttons;
@@ -566,6 +627,26 @@ int main()
 				}
 			}
 
+			//tutorial;
+			if (tutorial.getGlobalBounds().contains(mousePos))
+			{
+				if (sf::Mouse::isButtonPressed(Mouse::Left))
+				{
+					window.clear();
+					state = TUTORIAL;
+				}
+			}
+
+			//credits;
+			if (credit.getGlobalBounds().contains(mousePos))
+			{
+				if (sf::Mouse::isButtonPressed(Mouse::Left))
+				{
+					window.clear();
+					state = CREDIT;
+				}
+			}
+
 			//exit game;
 			if (exitGame.getGlobalBounds().contains(mousePos)) if (Mouse::isButtonPressed(Mouse::Left)) window.close();
 
@@ -586,7 +667,7 @@ int main()
 		//the game;
 		if (!isPause && state == HOME || !isPause && state == OUTDOOR || !isPause && state == SKY || !isPause && state == CASTLE || !isPause && state == STORE)
 		{
-			//stage 1;
+			//stage 1//
 			if (state == HOME)
 			{
 				//update GUI;
@@ -637,7 +718,7 @@ int main()
 				}
 			}
 
-			//stage 2;
+			//stage 2//
 			if (state == OUTDOOR)
 			{
 				//update GUI;
@@ -647,9 +728,6 @@ int main()
 
 				//update entities;
 				player.update(deltaTime);
-				/*if (player.getPosition().y >= 5000 && player.getPosition().y <= 6500) normalGargoyle1.updateFly(deltaTime, player.getPosition());
-				else normalGargoyle1.updateStill(deltaTime);
-				normalGargoyle2.updateStill(deltaTime);*/
 
 				//map collision;
 				if (!collisionCheat)
@@ -668,10 +746,222 @@ int main()
 				//draw map texture;
 				background2.draw(window);
 
+				//draw items;
+				coinCounter = 0;
+				for (coinIter = coinArray.begin();coinIter != coinArray.end();coinIter++)
+				{
+					coinArray[coinCounter].update(deltaTime);
+					window.draw(coinArray[coinCounter].body);
+					coinArray[coinCounter].lifetime++;
+					if (coinArray[coinCounter].lifetime >= 500)
+					{
+						coinArray[coinCounter].lifetime = 0;
+						coinArray[coinCounter].destroy = true;
+					}
+					coinCounter++;
+				}
+				hppCounter = 0;
+				for (hppIter = hppArray.begin();hppIter != hppArray.end();hppIter++)
+				{
+					hppArray[hppCounter].update(deltaTime);
+					window.draw(hppArray[hppCounter].body);
+					hppArray[hppCounter].lifetime++;
+					if (hppArray[hppCounter].lifetime >= 500)
+					{
+						hppArray[hppCounter].lifetime = 0;
+						hppArray[hppCounter].destroy = true;
+					}
+					hppCounter++;
+				}
+				mppCounter = 0;
+				for (mppIter = mppArray.begin();mppIter != mppArray.end();mppIter++)
+				{
+					mppArray[mppCounter].update(deltaTime);
+					window.draw(mppArray[mppCounter].body);
+					mppArray[mppCounter].lifetime++;
+					if (mppArray[mppCounter].lifetime >= 500)
+					{
+						mppArray[mppCounter].lifetime = 0;
+						mppArray[mppCounter].destroy = true;
+					}
+					mppCounter++;
+				}
+				keyCounter = 0;
+				for (keyIter = keyArray.begin();keyIter != keyArray.end();keyIter++)
+				{
+					keyArray[keyCounter].update(deltaTime);
+					window.draw(keyArray[keyCounter].body);
+					keyArray[keyCounter].lifetime++;
+					if (keyArray[keyCounter].lifetime >= 1800)
+					{
+						keyArray[keyCounter].lifetime = 0;
+						keyArray[keyCounter].destroy = true;
+					}
+					keyCounter++;
+				}
+
 				//draw entities;
-				/*normalGargoyle1.draw(window);
-				normalGargoyle2.draw(window);*/
-				player.draw(window);
+				if (normalGargoyle.isRespawned) //respawn gargoyle1;
+				{
+					int LoR = generateIntRandom(2, 1);
+					normalGargoyle.isRespawned = false;
+					if (LoR == 1) normalGargoyle.body.setPosition(generateIntRandom(500, 100), generateIntRandom(2300, 700));
+					else if (LoR == 2) normalGargoyle.body.setPosition(generateIntRandom(500, 1500), generateIntRandom(2300, 700));
+					gargoyle1Array.push_back(normalGargoyle);
+				}
+				gargoyle1Counter = 0; //gargoyle1 aggroed;
+				for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++)
+				{
+					if (gargoyle1Array[gargoyle1Counter].isAggroed)
+					{
+						gargoyle1Array[gargoyle1Counter].action = generateIntRandom(2, 1);
+						if (elapse[3].asMilliseconds() >= 10.f)
+						{
+							clock[3].restart();
+							gargoyle1Array[gargoyle1Counter].updateAggroedFly(deltaTime, playerPosition);
+						}
+					}
+					if (gargoyle1Array[gargoyle1Counter].action >= 2)
+					{
+						if (elapse[4].asSeconds() >= 1.f)
+						{
+							clock[4].restart();
+							if (playerPosition.x < gargoyle1Array[gargoyle1Counter].body.getPosition().x && abs(playerPosition.y - gargoyle1Array[gargoyle1Counter].body.getPosition().y) <= 40)
+							{
+								gargoyle1Bullet.direction = LEFT;
+								gargoyle1Bullet.body.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
+								gargoyle1BulletArray.push_back(gargoyle1Bullet);
+								gargoyle1Array[gargoyle1Counter].direction = LEFT;
+							}
+							if (playerPosition.x > gargoyle1Array[gargoyle1Counter].body.getPosition().x && abs(playerPosition.y - gargoyle1Array[gargoyle1Counter].body.getPosition().y) <= 40)
+							{
+								gargoyle1Bullet.direction = RIGHT;
+								gargoyle1Bullet.body.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
+								gargoyle1BulletArray.push_back(gargoyle1Bullet);
+								gargoyle1Array[gargoyle1Counter].direction = RIGHT;
+							}
+						}
+					}
+					gargoyle1Counter++;
+				}
+				gargoyle1Counter = 0; //gargoyle1 die;
+				for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++)
+				{
+					if (gargoyle1Array[gargoyle1Counter].isDead)
+					{
+						coin.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y);
+						coinArray.push_back(coin);
+						if (chance(24) == 0)
+						{
+							hpp.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y);
+							hppArray.push_back(hpp);
+						}
+						if (chance(19) == 0)
+						{
+							mpp.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y);
+							mppArray.push_back(mpp);
+						}
+						if (chance(299) == 0)
+						{
+							Key.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y + 25.f);
+							keyArray.push_back(Key);
+						}
+						entityValue = gargoyle1Value;
+						gargoyle1Array.erase(gargoyle1Iter);
+						normalGargoyle.isRespawned = true;
+						break;
+					}
+					gargoyle1Counter++;
+				}
+				gargoyle1Counter = 0; //draw gargoyle1;
+				for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++)
+				{
+					gargoyle1Array[gargoyle1Counter].updateFly(deltaTime);
+					window.draw(gargoyle1Array[gargoyle1Counter].body);
+					gargoyle1Counter++;
+				}
+
+				if (advancedGargoyle.isRespawned) //respawn gargoyle2;
+				{
+					int LoR = generateIntRandom(2, 1);
+					advancedGargoyle.isRespawned = false;
+					if (LoR == 1) advancedGargoyle.body.setPosition(generateIntRandom(500, 0), generateIntRandom(2300, 700));
+					else if (LoR == 2) advancedGargoyle.body.setPosition(generateIntRandom(500, 1600), generateIntRandom(2300, 700));
+					gargoyle2Array.push_back(advancedGargoyle);
+				}
+				gargoyle2Counter = 0; //gargoyle2 aggroed;
+				for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++)
+				{
+					if (gargoyle2Array[gargoyle2Counter].isAggroed)
+					{
+						gargoyle2Array[gargoyle2Counter].action = generateIntRandom(2, 1);
+						if (elapse[7].asMilliseconds() >= 10.f)
+						{
+							clock[7].restart();
+							gargoyle2Array[gargoyle2Counter].updateAggroedFly(deltaTime, playerPosition);
+						}
+					}
+					if (gargoyle2Array[gargoyle2Counter].action >= 2)
+					{
+						if (elapse[8].asSeconds() >= 0.8f)
+						{
+							clock[8].restart();
+							if (playerPosition.x < gargoyle2Array[gargoyle2Counter].body.getPosition().x && abs(playerPosition.y - gargoyle2Array[gargoyle2Counter].body.getPosition().y) <= 40)
+							{
+								gargoyle2Bullet.direction = LEFT;
+								gargoyle2Bullet.body.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
+								gargoyle2BulletArray.push_back(gargoyle2Bullet);
+								gargoyle2Array[gargoyle2Counter].direction = LEFT;
+							}
+							if (playerPosition.x > gargoyle2Array[gargoyle2Counter].body.getPosition().x && abs(playerPosition.y - gargoyle2Array[gargoyle2Counter].body.getPosition().y) <= 40)
+							{
+								gargoyle2Bullet.direction = RIGHT;
+								gargoyle2Bullet.body.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
+								gargoyle2BulletArray.push_back(gargoyle2Bullet);
+								gargoyle2Array[gargoyle2Counter].direction = RIGHT;
+							}
+						}
+					}
+					gargoyle2Counter++;
+				}
+				gargoyle2Counter = 0; //gargoyle2 die;
+				for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++)
+				{
+					if (gargoyle2Array[gargoyle2Counter].isDead)
+					{
+						coin.body.setPosition(generateIntRandom(480, 840), gargoyle2Array[gargoyle2Counter].body.getPosition().y);
+						coinArray.push_back(coin);
+						if (chance(24) == 0)
+						{
+							hpp.body.setPosition(generateIntRandom(480, 840), gargoyle2Array[gargoyle2Counter].body.getPosition().y);
+							hppArray.push_back(hpp);
+						}
+						if (chance(19) == 0)
+						{
+							mpp.body.setPosition(generateIntRandom(480, 840), gargoyle2Array[gargoyle2Counter].body.getPosition().y);
+							mppArray.push_back(mpp);
+						}
+						if (chance(99) == 0)
+						{
+							Key.body.setPosition(generateIntRandom(480, 840), gargoyle2Array[gargoyle2Counter].body.getPosition().y + 25.f);
+							keyArray.push_back(Key);
+						}
+						entityValue = gargoyle2Value;
+						gargoyle2Array.erase(gargoyle2Iter);
+						advancedGargoyle.isRespawned = true;
+						break;
+					}
+					gargoyle2Counter++;
+				}
+				gargoyle2Counter = 0; //draw gargoyle1;
+				for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++)
+				{
+					gargoyle2Array[gargoyle2Counter].updateFly(deltaTime);
+					window.draw(gargoyle2Array[gargoyle2Counter].body);
+					gargoyle2Counter++;
+				}
+
+				player.draw(window); //draw player;
 
 				//go back inside the house;
 				if (player.body.getGlobalBounds().intersects(warperO[0].getGlobalBounds()))
@@ -690,7 +980,7 @@ int main()
 				}
 			}
 
-			//stage 3;
+			//stage 3//
 			if (state == SKY)
 			{
 				//update GUI;
@@ -710,7 +1000,7 @@ int main()
 				//clear screen;
 				window.clear(Color(127, 231, 255));
 				window.setView(view);
-				
+
 				//draw map texture;
 				background3.draw(window);
 
@@ -769,11 +1059,11 @@ int main()
 				}
 
 				//draw entities;
-				if (normalTitan1.isRespawned) //respawn titan1;
+				if (normalTitan.isRespawned) //respawn titan1;
 				{
-					normalTitan1.isRespawned = false;
-					titan1Array.push_back(normalTitan1);
-					normalTitan1.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+					normalTitan.isRespawned = false;
+					titan1Array.push_back(normalTitan);
+					normalTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
 				}
 				titan1Counter = 0; //titan1 hit;
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
@@ -799,7 +1089,7 @@ int main()
 				titan1Counter = 0; //titan1	aggroed;
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
 				{
-					if (elapse[3].asMilliseconds() >= 10.f)
+					if (elapse[3].asSeconds() >= 0.02f)
 					{
 						clock[3].restart();
 						if (titan1Array[titan1Counter].isAggroed)
@@ -834,7 +1124,7 @@ int main()
 						}
 						entityValue = titan1Value;
 						titan1Array.erase(titan1Iter);
-						normalTitan1.isRespawned = true;
+						normalTitan.isRespawned = true;
 						break;
 					}
 					titan1Counter++;
@@ -842,16 +1132,16 @@ int main()
 				titan1Counter = 0; //draw titan1;
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
 				{
-					titan1Array[titan1Counter].updateWalk(deltaTime, playerPosition);
+					titan1Array[titan1Counter].updateWalk(deltaTime);
 					window.draw(titan1Array[titan1Counter].body);
 					titan1Counter++;
 				}
 
-				if (normalTitan2.isRespawned) //respawn titan2;
+				if (advancedTitan.isRespawned) //respawn titan2;
 				{
-					normalTitan2.isRespawned = false;
-					titan2Array.push_back(normalTitan2);
-					normalTitan2.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+					advancedTitan.isRespawned = false;
+					titan2Array.push_back(advancedTitan);
+					advancedTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
 				}
 				titan2Counter = 0; //titan2 hit;
 				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
@@ -880,7 +1170,7 @@ int main()
 					if (titan2Array[titan2Counter].isAggroed)
 					{
 						titan2Array[titan2Counter].action = generateIntRandom(2, 1);
-						if (elapse[3].asMilliseconds() >= 10.f)
+						if (elapse[3].asSeconds() >= 0.02f)
 						{
 							clock[3].restart();
 							titan2Array[titan2Counter].updateAggrovated(deltaTime, playerPosition);
@@ -897,6 +1187,7 @@ int main()
 								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
 								titan2BulletArray.push_back(titan2Bullet);
 								titan2Array[titan2Counter].direction = LEFT;
+								advancedTitan.shoot = true;
 							}
 							if (playerPosition.x > titan2Array[titan2Counter].body.getPosition().x && abs(playerPosition.y - titan2Array[titan2Counter].body.getPosition().y) <= 40)
 							{
@@ -904,6 +1195,7 @@ int main()
 								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
 								titan2BulletArray.push_back(titan2Bullet);
 								titan2Array[titan2Counter].direction = RIGHT;
+								advancedTitan.shoot = true;
 							}
 							if (playerPosition.y < titan2Array[titan2Counter].body.getPosition().y && abs(playerPosition.x - titan2Array[titan2Counter].body.getPosition().x) <= 40)
 							{
@@ -911,6 +1203,7 @@ int main()
 								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
 								titan2BulletArray.push_back(titan2Bullet);
 								titan2Array[titan2Counter].direction = UP;
+								advancedTitan.shoot = true;
 							}
 							if (playerPosition.y > titan2Array[titan2Counter].body.getPosition().y && abs(playerPosition.x - titan2Array[titan2Counter].body.getPosition().x) <= 40)
 							{
@@ -918,6 +1211,7 @@ int main()
 								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
 								titan2BulletArray.push_back(titan2Bullet);
 								titan2Array[titan2Counter].direction = DOWN;
+								advancedTitan.shoot = true;
 							}
 						}
 					}
@@ -947,7 +1241,7 @@ int main()
 						}
 						entityValue = titan2Value;
 						titan2Array.erase(titan2Iter);
-						normalTitan2.isRespawned = true;
+						advancedTitan.isRespawned = true;
 						break;
 					}
 					titan2Counter++;
@@ -955,7 +1249,7 @@ int main()
 				titan2Counter = 0; //draw titan2;
 				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
 				{
-					titan2Array[titan2Counter].updateWalk(deltaTime, playerPosition);
+					titan2Array[titan2Counter].updateWalk(deltaTime);
 					window.draw(titan2Array[titan2Counter].body);
 					titan2Counter++;
 				}
@@ -1008,6 +1302,7 @@ int main()
 				//update entities;
 				if (!gravityCheat) player.updateBossFight(deltaTime);
 				else player.update(deltaTime);
+				boss.updateStill(deltaTime);
 
 				//initialize ground;
 				Vector2f direction;
@@ -1026,6 +1321,7 @@ int main()
 
 				//draw entities;
 				player.draw(window);
+				boss.draw(window);
 			}
 
 			//store;
@@ -1044,6 +1340,9 @@ int main()
 				//clear screen;
 				window.clear();
 				window.setView(view);
+
+				//draw background;
+				store.draw(window);
 
 				//update buttons
 				welcomeText.update(mousePos);
@@ -1158,9 +1457,9 @@ int main()
 			{
 				//update player's stats
 				playerHP += 0.1f * deltaTime;
-				playerMP += 1.f * deltaTime;
+				playerMP += 0.5f * deltaTime;
 				if (player.hp <= 0) isPlayerDead = true;
-				
+
 				//bullet events;
 				if (wandLevel != 0) //player's bullets;
 				{
@@ -1181,7 +1480,47 @@ int main()
 						if (state == HOME && !collisionCheat) for (int i = 0; i < blockH.size(); i++) if (blockH[i].getGlobalBounds().intersects(projectileArray[bulletCounter].body.getGlobalBounds())) projectileArray[bulletCounter].isCollided = true;
 						if (state == OUTDOOR)
 						{
+							gargoyle1Counter = 0; //gargoyle1 got hit;
+							for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++)
+							{
+								if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(gargoyle1Array[gargoyle1Counter].body.getGlobalBounds()))
+								{
+									projectileArray[bulletCounter].isCollided = true;
+									int damage = projectileArray[bulletCounter].damage * (wandLevel / 3.f);
+									dmgDp.text.setString("-" + to_string(damage));
+									dmgDp.text.setPosition(gargoyle1Array[gargoyle1Counter].body.getPosition());
+									dmgArray.push_back(dmgDp);
+									gargoyle1Array[gargoyle1Counter].hp -= damage;
+									if (gargoyle1Array[gargoyle1Counter].hp <= 0.f)
+									{
+										gargoyle1Array[gargoyle1Counter].isDead = true;
+										playerScore += 50;
+									}
+									gargoyle1Array[gargoyle1Counter].isAggroed = true;
+								}
+								gargoyle1Counter++;
+							}
 
+							gargoyle2Counter = 0; //gargoyle1 got hit;
+							for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++)
+							{
+								if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(gargoyle2Array[gargoyle2Counter].body.getGlobalBounds()))
+								{
+									projectileArray[bulletCounter].isCollided = true;
+									int damage = projectileArray[bulletCounter].damage * (wandLevel / 4.f);
+									dmgDp.text.setString("-" + to_string(damage));
+									dmgDp.text.setPosition(gargoyle2Array[gargoyle2Counter].body.getPosition());
+									dmgArray.push_back(dmgDp);
+									gargoyle2Array[gargoyle2Counter].hp -= damage;
+									if (gargoyle2Array[gargoyle2Counter].hp <= 0.f)
+									{
+										gargoyle2Array[gargoyle2Counter].isDead = true;
+										playerScore += 200;
+									}
+									gargoyle2Array[gargoyle2Counter].isAggroed = true;
+								}
+								gargoyle2Counter++;
+							}
 						}
 						if (state == SKY)
 						{
@@ -1247,7 +1586,53 @@ int main()
 					}
 				}
 
-				titan2BulletCounter = 0;
+				gargoyle1BulletCounter = 0; //gargoyle1's bullets hit player;
+				for (gargoyle1BulletIter = gargoyle1BulletArray.begin(); gargoyle1BulletIter != gargoyle1BulletArray.end();gargoyle1BulletIter++)
+				{
+					if (gargoyle1BulletArray[gargoyle1BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						int damage = gargoyle1BulletArray[gargoyle1BulletCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						playerHP -= gargoyle1Bullet.damage;
+						gargoyle1BulletArray.erase(gargoyle1BulletIter);
+						break;
+					}
+					gargoyle1BulletCounter++;
+				}
+				gargoyle1BulletCounter = 0; //draw gargoyle1's bullets;
+				for (gargoyle1BulletIter = gargoyle1BulletArray.begin(); gargoyle1BulletIter != gargoyle1BulletArray.end();gargoyle1BulletIter++)
+				{
+					gargoyle1BulletArray[gargoyle1BulletCounter].update(deltaTime);
+					window.draw(gargoyle1BulletArray[gargoyle1BulletCounter].body);
+					gargoyle1BulletCounter++;
+				}
+
+				gargoyle2BulletCounter = 0; //gargoyle2's bullets hit player;
+				for (gargoyle2BulletIter = gargoyle2BulletArray.begin(); gargoyle2BulletIter != gargoyle2BulletArray.end();gargoyle2BulletIter++)
+				{
+					if (gargoyle2BulletArray[gargoyle2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						int damage = gargoyle2BulletArray[gargoyle2BulletCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						playerHP -= gargoyle1Bullet.damage;
+						gargoyle2BulletArray.erase(gargoyle2BulletIter);
+						break;
+					}
+					gargoyle2BulletCounter++;
+				}
+				gargoyle2BulletCounter = 0; //draw gargoyle2's bullets;
+				for (gargoyle2BulletIter = gargoyle2BulletArray.begin(); gargoyle2BulletIter != gargoyle2BulletArray.end();gargoyle2BulletIter++)
+				{
+					gargoyle2BulletArray[gargoyle2BulletCounter].update(deltaTime);
+					window.draw(gargoyle2BulletArray[gargoyle2BulletCounter].body);
+					gargoyle2BulletCounter++;
+				}
+
+				titan2BulletCounter = 0; //titan2's bullets hit player;
 				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
 				{
 					if (titan2BulletArray[titan2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
@@ -1262,7 +1647,7 @@ int main()
 					}
 					titan2BulletCounter++;
 				}
-				titan2BulletCounter = 0; 
+				titan2BulletCounter = 0; //draw titan2's bullets;
 				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
 				{
 					titan2BulletArray[titan2BulletCounter].update(deltaTime);
@@ -1490,11 +1875,11 @@ int main()
 				}
 			}
 
-			//pause;
+			//pause//
 			if (Keyboard::isKeyPressed(Keyboard::Escape)) isPause = true;
 		}
 
-		//pause menu;
+		//pause menu//
 		if (isPause)
 		{
 			//update buttons;
@@ -1532,7 +1917,7 @@ int main()
 			}
 		}
 
-		//game over;
+		//game over//
 		if (state == GAME_OVER)
 		{
 			//restart game;
@@ -1602,7 +1987,7 @@ int main()
 			window.clear();
 		}
 
-		//display window;
+		//display window//
 		window.display();
 	}
 	return 0;
