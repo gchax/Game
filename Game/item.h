@@ -6,7 +6,8 @@ class item
 {
 public:
 	bool isPickedUp = false;
-	bool isCoin = false;
+	bool destroy = false;
+	int lifetime = 0;
 	RectangleShape body;
 
 	item(Texture* texture, Vector2u imageCount, Vector2f size);

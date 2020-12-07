@@ -18,8 +18,8 @@ enum states { MENU = 0, HOME, OUTDOOR, SKY, CASTLE, STORE, PAUSE, GAME_OVER, SCO
 enum click { UNSELECTED = 0, BOUGHT, BYE };
 
 //define global variables;
-static float viewWidght = 1500.f;
-static float viewHeight = 900.f;
+static float viewWidght = 1920.f;
+static float viewHeight = 1080.f;
 static unsigned int framerateLimit = 60;
 static float maxHP = 3000.f;
 static float maxMP = 800.f;

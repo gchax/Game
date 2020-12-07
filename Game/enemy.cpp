@@ -22,35 +22,25 @@ enemy::~enemy()
 
 void enemy::updateStill(float deltaTime)
 {
-	body.setFillColor(Color(255, 255, 255, 255));
 	animation.update(0, deltaTime);
 	body.setTextureRect(animation.uvRect);
 }
 
-void enemy::updateFly(float deltaTime, Vector2f playerPosition)
+void enemy::updateAggroedFly(float deltaTime, Vector2f playerPosition)
 {
-	body.setFillColor(Color(255, 255, 255, 255));
 	animation.update(0, deltaTime);
 	body.setTextureRect(animation.uvRect);
 	body.setPosition(position.x, playerPosition.y);
 }
 
-void enemy::updateWalk(float deltaTime)
+void enemy::updateWalk(float deltaTime, Vector2f playerPosition)
 {
-	body.setFillColor(Color(255, 255, 255, 255));
-
-	if (direction == IDLE)
-	if (direction == UP)
-	{
-		body.move(0, -(speed * deltaTime));
-	}
-	if (direction == DOWN)
-	{
-		body.move(0, speed * deltaTime);
-	}
+	if (direction == IDLE);
+	if (direction == UP) body.move(0, -speed * deltaTime);
+	if (direction == DOWN) body.move(0, speed * deltaTime);
 	if (direction == LEFT)
 	{
-		body.move(-(speed * deltaTime), 0);
+		body.move(-speed * deltaTime, 0);
 		row = 0;
 	}
 	if (direction == RIGHT)
@@ -70,19 +60,30 @@ void enemy::updateWalk(float deltaTime)
 	body.setTextureRect(animation.uvRect);
 }
 
-void enemy::updateSemiBoss(float deltaTime)
+void enemy::updateAggrovated(float deltaTime, Vector2f playerPosition)
 {
-	body.setFillColor(Color(255, 255, 255, 255));
+	if (action == 1)
+	{
+		if (body.getPosition().x > playerPosition.x)
+		{
+			body.move(-speed * deltaTime, 0);
+			row = 0;
+		}
+		else
+		{
+			body.move(speed * deltaTime, 0);
+			row = 2;
+		}
+		if (body.getPosition().y > playerPosition.y) body.move(0, -speed * deltaTime);
+		else body.move(0, speed * deltaTime);
+	}
+
+	animation.update(row, deltaTime);
+	body.setTextureRect(animation.uvRect);
 }
 
 void enemy::updateBoss(float deltaTime)
 {
-	body.setFillColor(Color(255, 255, 255, 255));
-}
-
-void enemy::hurt()
-{
-	body.setFillColor(Color(255, 0, 0, 255));
 }
 
 void enemy::draw(RenderWindow& window)

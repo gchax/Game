@@ -10,7 +10,10 @@ public:
 	int counter = 0;
 	bool isCollided = false;
 	bool isDead = false;
-	bool isRespawnwed = false;
+	bool isRespawned = false;
+	bool isAggroed = false;
+	int action = 0;
+	int effectLifetime = 0;
 	float hp;
 	float damage;
 	float speed;
@@ -19,9 +22,9 @@ public:
 	~enemy();
 
 	void updateStill(float deltaTime);
-	void updateFly(float deltaTime, Vector2f playerPosition);
-	void updateWalk(float deltaTime);
-	void updateSemiBoss(float deltaTime);
+	void updateAggroedFly(float deltaTime, Vector2f playerPosition);
+	void updateWalk(float deltaTime, Vector2f playerPosition);
+	void updateAggrovated(float deltaTime, Vector2f playerPosition);
 	void updateBoss(float deltaTime);
 	void hurt();
 	void draw(RenderWindow& window);

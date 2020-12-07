@@ -43,7 +43,9 @@ int main()
 	bool gravityCheat = false;
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
-	int wandLevel = 0;
+	bool useHpPotion = false;
+	bool useMpPotion = false;
+	int wandLevel = 60;
 	int key = 0;
 	int playerScore = 0;
 	int playerMoney = 0;
@@ -55,6 +57,13 @@ int main()
 	float playerMP = maxmp;
 	float playerGravity = gravity;
 
+	//initialize textures;
+	Texture HPP;
+	HPP.loadFromFile("hpp.jpg");
+
+	Texture MPP;
+	MPP.loadFromFile("mpp.jpg");
+
 
 	//initialize player;
 	Texture jack;
@@ -64,7 +73,7 @@ int main()
 
 	//declare delta time;
 	float deltaTime = 0.0f;
-	Clock clock[3];
+	Clock clock[10];
 
 
 	//initialzie map variables;
@@ -373,26 +382,22 @@ int main()
 	//initialize enemies;
 	Texture gargoyle1;
 	gargoyle1.loadFromFile("gargoyle1.png");
-	enemy normalGargoyle1(&gargoyle1, Vector2u(5, 1), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2000.f, 15);
-
-	Texture gargoyle1_5;
-	gargoyle1_5.loadFromFile("flippedgargoyle1.png");
-	enemy normalGargoyle2(&gargoyle1_5, Vector2u(5, 1), Vector2f(360.f, 232.f), Vector2f(2520.f, 4500.f), 0.08f, 20.f, 2000.f, 15);
+	Texture gargoyle1Ball;
+	gargoyle1Ball.loadFromFile("ballg1.png");
+	enemy normalGargoyle1(&gargoyle1, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2000.f, 15);
 
 	Texture gargoyle2;
 	gargoyle2.loadFromFile("gargoyle2.png");
-	enemy toughGargoyle1(&gargoyle2, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2500.f, 25);
-
-	Texture gargoyle2_5;
-	gargoyle2_5.loadFromFile("flippedgargoyle2.png");
-	enemy toughGargoyle2(&gargoyle2_5, Vector2u(5, 2), Vector2f(360.f, 232.f), Vector2f(2520.f, 4500.f), 0.08f, 20.f, 2500.f, 25);
+	Texture gargoyle2Ball;
+	gargoyle2Ball.loadFromFile("ballg2.png");
+	enemy toughGargoyle1(&gargoyle2, Vector2u(5, 4), Vector2f(360.f, 232.f), Vector2f(1080.f, rand() % 500 + 6000), 0.08f, 20.f, 2500.f, 25);
 
 	Texture titan1;
 	titan1.loadFromFile("titan1.png");
+	enemy normalTitan1(&titan1, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 200.f, 2000.f, 30);
 	vector<enemy>::const_iterator titan1Iter;
 	vector<enemy> titan1Array;
-	enemy normalTitan1(&titan1, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 200.f, 2000.f, 50);
-	for (int i = 0;i < 10;i++)
+	for (int i = 0;i < 7;i++)
 	{
 		titan1Array.push_back(normalTitan1);
 		normalTitan1.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
@@ -400,10 +405,15 @@ int main()
 
 	Texture titan2;
 	titan2.loadFromFile("titan2.png");
+	Texture titan2Ball;
+	titan2Ball.loadFromFile("ballt2.png");
+	projectile titan2Bullet(&titan2Ball, 1000.f, 30.f);
+	vector<projectile>::const_iterator titan2BulletIter;
+	vector<projectile> titan2BulletArray;
+	enemy normalTitan2(&titan2, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 280.f, 5000.f, 70);
 	vector<enemy>::const_iterator titan2Iter;
 	vector<enemy> titan2Array;
-	enemy normalTitan2(&titan1, Vector2u(3, 4), Vector2f(228.f, 300.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 280.f, 5000.f, 100);
-	for (int i = 0;i < 5;i++)
+	for (int i = 0;i < 3;i++)
 	{
 		titan2Array.push_back(normalTitan2);
 		normalTitan2.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
@@ -418,6 +428,21 @@ int main()
 	vector<textDisplay>::const_iterator moneyIter;
 	vector<textDisplay> moneyArray;
 
+	textDisplay hppDp(Color(255, 155, 0));
+	hppDp.text.setFont(font);
+	vector<textDisplay>::const_iterator hppPickUpIter;
+	vector<textDisplay> hppPickUpArray;
+
+	textDisplay mppDp(Color::Magenta);
+	mppDp.text.setFont(font);
+	vector<textDisplay>::const_iterator mppPickUpIter;
+	vector<textDisplay> mppPickUpArray;
+
+	textDisplay keyDp(Color(255, 239, 84));
+	keyDp.text.setFont(font);
+	vector<textDisplay>::const_iterator keyPickUpIter;
+	vector<textDisplay> keyPickUpArray;
+
 	textDisplay dmgDp(Color::Red);
 	dmgDp.text.setFont(font);
 	vector<textDisplay>::const_iterator dmgIter;
@@ -425,6 +450,7 @@ int main()
 
 	int entityValue = 0;
 	int titan1Value = generateIntRandom(10, 50);
+	int titan2Value = generateIntRandom(10, 100);
 
 
 	//loop;
@@ -435,10 +461,17 @@ int main()
 		if (deltaTime > 1.f / 20.f) deltaTime = 1.f / 20.f;
 
 		//initialize time variables;
-		Time elapse[3];
+		Time elapse[10];
 		elapse[0] = clock[0].getElapsedTime();
 		elapse[1] = clock[1].getElapsedTime();
 		elapse[2] = clock[2].getElapsedTime();
+		elapse[3] = clock[3].getElapsedTime();
+		elapse[4] = clock[4].getElapsedTime();
+		elapse[5] = clock[5].getElapsedTime();
+		elapse[6] = clock[6].getElapsedTime();
+		elapse[7] = clock[7].getElapsedTime();
+		elapse[8] = clock[8].getElapsedTime();
+		elapse[9] = clock[9].getElapsedTime();
 
 		//set window event;
 		Event event;
@@ -459,18 +492,28 @@ int main()
 		if (playerMoney < 0) playerMoney = 0;
 		if (wandLevel >= 60) wandLevel = 60;
 		player.gravity = playerGravity;
-		playerGUI gui(&font, player.hp, player.mp, player.money, playerScore, wandLevel);
+		playerGUI gui(&font, &HPP, &MPP, player.hp, maxhp, player.mp, maxmp, hpPotion, mpPotion, player.money, playerScore, wandLevel, key);
 		float atkSpd = 0.4f - wandLevel / 600.f;
-		cout << "x = " << playerPosition.x << "\ty = " << playerPosition.y << endl;
+		//cout << "x = " << playerPosition.x << "\ty = " << playerPosition.y << endl;
+		cout << "hpp = " << hpPotion << "mpp = " << mpPotion << endl;
 
-		//counters;
+		//loop counters;
+		int gargoyle1Counter = 0;
+		int gargoyle1BulletCounter = 0;
+		int gargoyle2Counter = 0;
+		int gargoyle2BulletCounter = 0;
 		int titan1Counter = 0;
+		int titan2Counter = 0;
+		int titan2BulletCounter = 0;
 		int bulletCounter = 0;
 		int coinCounter = 0;
 		int hppCounter = 0;
 		int mppCounter = 0;
 		int keyCounter = 0;
 		int moneyCounter = 0;
+		int hppPickUpCounter = 0;
+		int mppPickUpCounter = 0;
+		int keyPickUpCounter = 0;
 		int dmgCounter = 0;
 
 		//textbox;
@@ -677,6 +720,12 @@ int main()
 				{
 					coinArray[coinCounter].update(deltaTime);
 					window.draw(coinArray[coinCounter].body);
+					coinArray[coinCounter].lifetime++;
+					if (coinArray[coinCounter].lifetime >= 500)
+					{
+						coinArray[coinCounter].lifetime = 0;
+						coinArray[coinCounter].destroy = true;
+					}
 					coinCounter++;
 				}
 				hppCounter = 0;
@@ -684,6 +733,12 @@ int main()
 				{
 					hppArray[hppCounter].update(deltaTime);
 					window.draw(hppArray[hppCounter].body);
+					hppArray[hppCounter].lifetime++;
+					if (hppArray[hppCounter].lifetime >= 500)
+					{
+						hppArray[hppCounter].lifetime = 0;
+						hppArray[hppCounter].destroy = true;
+					}
 					hppCounter++;
 				}
 				mppCounter = 0;
@@ -691,6 +746,12 @@ int main()
 				{
 					mppArray[mppCounter].update(deltaTime);
 					window.draw(mppArray[mppCounter].body);
+					mppArray[mppCounter].lifetime++;
+					if (mppArray[mppCounter].lifetime >= 500)
+					{
+						mppArray[mppCounter].lifetime = 0;
+						mppArray[mppCounter].destroy = true;
+					}
 					mppCounter++;
 				}
 				keyCounter = 0;
@@ -698,17 +759,23 @@ int main()
 				{
 					keyArray[keyCounter].update(deltaTime);
 					window.draw(keyArray[keyCounter].body);
+					keyArray[keyCounter].lifetime++;
+					if (keyArray[keyCounter].lifetime >= 1800)
+					{
+						keyArray[keyCounter].lifetime = 0;
+						keyArray[keyCounter].destroy = true;
+					}
 					keyCounter++;
 				}
 
 				//draw entities;
-				if (normalTitan1.isRespawnwed) //respawn;
+				if (normalTitan1.isRespawned) //respawn titan1;
 				{
-					normalTitan1.isRespawnwed = false;
+					normalTitan1.isRespawned = false;
 					titan1Array.push_back(normalTitan1);
 					normalTitan1.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
 				}
-				titan1Counter = 0; //hit;
+				titan1Counter = 0; //titan1 hit;
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
 				{
 					collider titan1Collision = titan1Array[titan1Counter].getCollider();
@@ -729,7 +796,21 @@ int main()
 					}
 					titan1Counter++;
 				}
-				titan1Counter = 0; //die;
+				titan1Counter = 0; //titan1	aggroed;
+				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
+				{
+					if (elapse[3].asMilliseconds() >= 10.f)
+					{
+						clock[3].restart();
+						if (titan1Array[titan1Counter].isAggroed)
+						{
+							titan1Array[titan1Counter].action = 1;
+							titan1Array[titan1Counter].updateAggrovated(deltaTime, playerPosition);
+						}
+					}
+					titan1Counter++;
+				}
+				titan1Counter = 0; //titan1 die;
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
 				{
 					if (titan1Array[titan1Counter].isDead)
@@ -746,14 +827,14 @@ int main()
 							mpp.body.setPosition(titan1Array[titan1Counter].body.getPosition().x - 25.f, titan1Array[titan1Counter].body.getPosition().y);
 							mppArray.push_back(mpp);
 						}
-						if (chance(64) == 0)
+						if (chance(69) == 0)
 						{
 							Key.body.setPosition(titan1Array[titan1Counter].body.getPosition().x, titan1Array[titan1Counter].body.getPosition().y + 25.f);
 							keyArray.push_back(Key);
 						}
 						entityValue = titan1Value;
 						titan1Array.erase(titan1Iter);
-						normalTitan1.isRespawnwed = true;
+						normalTitan1.isRespawned = true;
 						break;
 					}
 					titan1Counter++;
@@ -761,10 +842,124 @@ int main()
 				titan1Counter = 0; //draw titan1;
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
 				{
-					titan1Array[titan1Counter].updateWalk(deltaTime);
+					titan1Array[titan1Counter].updateWalk(deltaTime, playerPosition);
 					window.draw(titan1Array[titan1Counter].body);
 					titan1Counter++;
 				}
+
+				if (normalTitan2.isRespawned) //respawn titan2;
+				{
+					normalTitan2.isRespawned = false;
+					titan2Array.push_back(normalTitan2);
+					normalTitan2.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
+				}
+				titan2Counter = 0; //titan2 hit;
+				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
+				{
+					collider titan2Collision = titan2Array[titan2Counter].getCollider();
+					for (int i = 0; i < blockS.size(); i++) blockS[i].getCollider().checkCollider(titan2Collision, 1.0f);
+
+					if (player.body.getGlobalBounds().intersects(titan2Array[titan2Counter].body.getGlobalBounds()))
+					{
+						player.hurt();
+						if (elapse[1].asSeconds() >= 0.5f)
+						{
+							clock[1].restart();
+							int damage = titan2Array[titan2Counter].damage;
+							dmgDp.text.setString("-" + to_string(damage));
+							dmgDp.text.setPosition(playerPosition);
+							dmgArray.push_back(dmgDp);
+							if (!unlimitedHealthCheat) playerHP -= damage;
+						}
+					}
+					titan2Counter++;
+				}
+				titan2Counter = 0; //titan2	aggroed;
+				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
+				{
+					if (titan2Array[titan2Counter].isAggroed)
+					{
+						titan2Array[titan2Counter].action = generateIntRandom(2, 1);
+						if (elapse[3].asMilliseconds() >= 10.f)
+						{
+							clock[3].restart();
+							titan2Array[titan2Counter].updateAggrovated(deltaTime, playerPosition);
+						}
+					}
+					if (titan2Array[titan2Counter].action >= 2)
+					{
+						if (elapse[4].asSeconds() >= 0.5f)
+						{
+							clock[4].restart();
+							if (playerPosition.x < titan2Array[titan2Counter].body.getPosition().x && abs(playerPosition.y - titan2Array[titan2Counter].body.getPosition().y) <= 40)
+							{
+								titan2Bullet.direction = LEFT;
+								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
+								titan2BulletArray.push_back(titan2Bullet);
+								titan2Array[titan2Counter].direction = LEFT;
+							}
+							if (playerPosition.x > titan2Array[titan2Counter].body.getPosition().x && abs(playerPosition.y - titan2Array[titan2Counter].body.getPosition().y) <= 40)
+							{
+								titan2Bullet.direction = RIGHT;
+								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
+								titan2BulletArray.push_back(titan2Bullet);
+								titan2Array[titan2Counter].direction = RIGHT;
+							}
+							if (playerPosition.y < titan2Array[titan2Counter].body.getPosition().y && abs(playerPosition.x - titan2Array[titan2Counter].body.getPosition().x) <= 40)
+							{
+								titan2Bullet.direction = UP;
+								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
+								titan2BulletArray.push_back(titan2Bullet);
+								titan2Array[titan2Counter].direction = UP;
+							}
+							if (playerPosition.y > titan2Array[titan2Counter].body.getPosition().y && abs(playerPosition.x - titan2Array[titan2Counter].body.getPosition().x) <= 40)
+							{
+								titan2Bullet.direction = DOWN;
+								titan2Bullet.body.setPosition(titan2Array[titan2Counter].body.getPosition());
+								titan2BulletArray.push_back(titan2Bullet);
+								titan2Array[titan2Counter].direction = DOWN;
+							}
+						}
+					}
+					titan2Counter++;
+				}
+				titan2Counter = 0; //titan2 die;
+				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
+				{
+					if (titan2Array[titan2Counter].isDead)
+					{
+						coin.body.setPosition(titan2Array[titan2Counter].body.getPosition());
+						coinArray.push_back(coin);
+						if (chance(9) == 0)
+						{
+							hpp.body.setPosition(titan2Array[titan2Counter].body.getPosition().x + 25.f, titan2Array[titan2Counter].body.getPosition().y);
+							hppArray.push_back(hpp);
+						}
+						if (chance(4) == 0)
+						{
+							mpp.body.setPosition(titan2Array[titan2Counter].body.getPosition().x - 25.f, titan2Array[titan2Counter].body.getPosition().y);
+							mppArray.push_back(mpp);
+						}
+						if (chance(39) == 0)
+						{
+							Key.body.setPosition(titan2Array[titan2Counter].body.getPosition().x, titan2Array[titan2Counter].body.getPosition().y + 25.f);
+							keyArray.push_back(Key);
+						}
+						entityValue = titan2Value;
+						titan2Array.erase(titan2Iter);
+						normalTitan2.isRespawned = true;
+						break;
+					}
+					titan2Counter++;
+				}
+				titan2Counter = 0; //draw titan2;
+				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
+				{
+					titan2Array[titan2Counter].updateWalk(deltaTime, playerPosition);
+					window.draw(titan2Array[titan2Counter].body);
+					titan2Counter++;
+				}
+
 				player.draw(window); //draw player;
 
 				//go down the beanstalk;
@@ -967,7 +1162,7 @@ int main()
 				if (player.hp <= 0) isPlayerDead = true;
 				
 				//bullet events;
-				if (wandLevel != 0)
+				if (wandLevel != 0) //player's bullets;
 				{
 					if (Keyboard::isKeyPressed(Keyboard::Space) && playerMP > 0) //release bullet;
 					{
@@ -996,7 +1191,6 @@ int main()
 								if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(titan1Array[titan1Counter].body.getGlobalBounds()))
 								{
 									projectileArray[bulletCounter].isCollided = true;
-									titan1Array[titan1Counter].body.setFillColor(Color::Red);
 									int damage = projectileArray[bulletCounter].damage * (wandLevel / 5.f);
 									dmgDp.text.setString("-" + to_string(damage));
 									dmgDp.text.setPosition(titan1Array[titan1Counter].body.getPosition());
@@ -1007,8 +1201,30 @@ int main()
 										titan1Array[titan1Counter].isDead = true;
 										playerScore += 500;
 									}
+									titan1Array[titan1Counter].isAggroed = true;
 								}
 								titan1Counter++;
+							}
+
+							titan2Counter = 0; //titan2 got hit;
+							for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
+							{
+								if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(titan2Array[titan2Counter].body.getGlobalBounds()))
+								{
+									projectileArray[bulletCounter].isCollided = true;
+									int damage = projectileArray[bulletCounter].damage * (wandLevel / 6.f);
+									dmgDp.text.setString("-" + to_string(damage));
+									dmgDp.text.setPosition(titan2Array[titan2Counter].body.getPosition());
+									dmgArray.push_back(dmgDp);
+									titan2Array[titan2Counter].hp -= damage;
+									if (titan2Array[titan2Counter].hp <= 0.f)
+									{
+										titan2Array[titan2Counter].isDead = true;
+										playerScore += 1500;
+									}
+									titan2Array[titan2Counter].isAggroed = true;
+								}
+								titan2Counter++;
 							}
 						}
 						if (state == CASTLE && !collisionCheat)
@@ -1031,6 +1247,29 @@ int main()
 					}
 				}
 
+				titan2BulletCounter = 0;
+				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
+				{
+					if (titan2BulletArray[titan2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						int damage = titan2BulletArray[titan2BulletCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						playerHP -= titan2Bullet.damage;
+						titan2BulletArray.erase(titan2BulletIter);
+						break;
+					}
+					titan2BulletCounter++;
+				}
+				titan2BulletCounter = 0; 
+				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
+				{
+					titan2BulletArray[titan2BulletCounter].update(deltaTime);
+					window.draw(titan2BulletArray[titan2BulletCounter].body);
+					titan2BulletCounter++;
+				}
+
 				//items pick up;
 				coinCounter = 0; //coins pick up;
 				for (coinIter = coinArray.begin(); coinIter != coinArray.end();coinIter++)
@@ -1042,6 +1281,10 @@ int main()
 						moneyDp.text.setString("+$" + to_string(entityValue));
 						moneyDp.text.setPosition(coinArray[coinCounter].body.getPosition());
 						moneyArray.push_back(moneyDp);
+						coinArray[coinCounter].destroy = true;
+					}
+					if (coinArray[coinCounter].destroy)
+					{
 						coinArray.erase(coinIter);
 						break;
 					}
@@ -1054,6 +1297,13 @@ int main()
 					if (hppArray[hppCounter].isPickedUp)
 					{
 						hpPotion++;
+						hppDp.text.setString("+1 HEALTH POTION");
+						hppDp.text.setPosition(hppArray[hppCounter].body.getPosition());
+						hppPickUpArray.push_back(hppDp);
+						hppArray[hppCounter].destroy = true;
+					}
+					if (hppArray[hppCounter].destroy)
+					{
 						hppArray.erase(hppIter);
 						break;
 					}
@@ -1066,6 +1316,13 @@ int main()
 					if (mppArray[mppCounter].isPickedUp)
 					{
 						mpPotion++;
+						mppDp.text.setString("+1 MANA POTION");
+						mppDp.text.setPosition(mppArray[mppCounter].body.getPosition());
+						mppPickUpArray.push_back(mppDp);
+						mppArray[mppCounter].destroy = true;
+					}
+					if (mppArray[mppCounter].destroy)
+					{
 						mppArray.erase(mppIter);
 						break;
 					}
@@ -1078,6 +1335,13 @@ int main()
 					if (keyArray[keyCounter].isPickedUp)
 					{
 						key++;
+						keyDp.text.setString("+1 KEY");
+						keyDp.text.setPosition(keyArray[keyCounter].body.getPosition());
+						keyPickUpArray.push_back(keyDp);
+						keyArray[keyCounter].destroy = true;
+					}
+					if (keyArray[keyCounter].destroy)
+					{
 						keyArray.erase(keyIter);
 						break;
 					}
@@ -1096,6 +1360,42 @@ int main()
 						break;
 					}
 					moneyCounter++;
+				}
+				hppPickUpCounter = 0;
+				for (hppPickUpIter = hppPickUpArray.begin();hppPickUpIter != hppPickUpArray.end();hppPickUpIter++)
+				{
+					hppPickUpArray[hppPickUpCounter].update(deltaTime);
+					window.draw(hppPickUpArray[hppPickUpCounter].text);
+					if (hppPickUpArray[hppPickUpCounter].destroy)
+					{
+						hppPickUpArray.erase(hppPickUpIter);
+						break;
+					}
+					hppPickUpCounter++;
+				}
+				mppPickUpCounter = 0;
+				for (mppPickUpIter = mppPickUpArray.begin();mppPickUpIter != mppPickUpArray.end();mppPickUpIter++)
+				{
+					mppPickUpArray[mppPickUpCounter].update(deltaTime);
+					window.draw(mppPickUpArray[mppPickUpCounter].text);
+					if (mppPickUpArray[mppPickUpCounter].destroy)
+					{
+						mppPickUpArray.erase(mppPickUpIter);
+						break;
+					}
+					mppPickUpCounter++;
+				}
+				keyPickUpCounter = 0;
+				for (keyPickUpIter = keyPickUpArray.begin();keyPickUpIter != keyPickUpArray.end();keyPickUpIter++)
+				{
+					keyPickUpArray[keyPickUpCounter].update(deltaTime);
+					window.draw(keyPickUpArray[keyPickUpCounter].text);
+					if (keyPickUpArray[keyPickUpCounter].destroy)
+					{
+						keyPickUpArray.erase(keyPickUpIter);
+						break;
+					}
+					keyPickUpCounter++;
 				}
 				dmgCounter = 0;
 				for (dmgIter = dmgArray.begin();dmgIter != dmgArray.end();dmgIter++)
@@ -1116,7 +1416,16 @@ int main()
 				gui.drawWandState(window);
 
 				//buffs;
-
+				if (Keyboard::isKeyPressed(Keyboard::Num1) && hpPotion != 0)
+				{
+					hpPotion--;
+					playerHP += 200;
+				}
+				if (Keyboard::isKeyPressed(Keyboard::Num2) && mpPotion != 0)
+				{
+					mpPotion--;
+					playerMP += 50;
+				}
 
 				//cheats;
 				if (Keyboard::isKeyPressed(Keyboard::Num1) && Keyboard::isKeyPressed(Keyboard::Home))
@@ -1208,14 +1517,17 @@ int main()
 			{
 				if (sf::Mouse::isButtonPressed(Mouse::Left))
 				{
+					isPause = false;
 					window.clear();
 					state = MENU;
 					wandLevel = 0;
-					isPause = false;
 					playerScore = 0;
 					playerMoney = 0;
 					playerHP = maxHP;
 					playerMP = maxMP;
+					hpPotion = 0;
+					mpPotion = 0;
+					key = 0;
 				}
 			}
 		}
@@ -1260,6 +1572,9 @@ int main()
 					playerMoney = 0;
 					playerHP = maxHP;
 					playerMP = maxMP;
+					hpPotion = 0;
+					mpPotion = 0;
+					key = 0;
 				}
 			}
 
