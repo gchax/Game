@@ -54,15 +54,15 @@ void enemy::updateWalk(float deltaTime)
 	if (direction == IDLE);
 	if (direction == UP) body.move(0, -speed * deltaTime);
 	if (direction == DOWN) body.move(0, speed * deltaTime);
-	if (direction == LEFT)
-	{
-		body.move(-speed * deltaTime, 0);
-		row = 0;
-	}
 	if (direction == RIGHT)
 	{
 		body.move(speed * deltaTime, 0);
-		row = 2;
+		row = 0;
+	}
+	if (direction == LEFT)
+	{
+		body.move(-speed * deltaTime, 0);
+		row = 1;
 	}
 
 	counter++;
@@ -83,14 +83,12 @@ void enemy::updateAggrovated(float deltaTime, Vector2f playerPosition)
 		if (body.getPosition().x > playerPosition.x)
 		{
 			body.move(-speed * deltaTime, 0);
-			if (shoot) row = 1;
-			else row = 0;
+			row = 1;
 		}
 		else
 		{
 			body.move(speed * deltaTime, 0);
-			if (shoot) row = 3;
-			else row = 2;
+			row = 0;
 		}
 		if (body.getPosition().y > playerPosition.y) body.move(0, -speed * deltaTime);
 		else body.move(0, speed * deltaTime);
@@ -100,8 +98,20 @@ void enemy::updateAggrovated(float deltaTime, Vector2f playerPosition)
 	body.setTextureRect(animation.uvRect);
 }
 
-void enemy::updateBoss(float deltaTime)
+void enemy::updateBoss(float deltaTime, int bossPhase)
 {
+	this->bossPhase = bossPhase;
+	if (bossPhase == AGGROVATED || bossPhase == INFURIATED || bossPhase == MURDEROUS) row = 1;
+	else row = 0;
+	if (isDead == true)
+	{
+		row = 2;
+		effectLifetime++;
+		if (effectLifetime >= 100) row = 3;
+	}
+
+	animation.update(row, deltaTime);
+	body.setTextureRect(animation.uvRect);
 }
 
 void enemy::draw(RenderWindow& window)

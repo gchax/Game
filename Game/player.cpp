@@ -60,16 +60,14 @@ void player::updateBossFight(float deltaTime)
 {
 	body.setFillColor(Color(255, 255, 255, 255));
 	velocity.x *= 0.f;
+	velocity.y += gravity * deltaTime;
 		
 	if (Keyboard::isKeyPressed(Keyboard::W) && canJump)
 	{
 		canJump = false;
 		velocity.y = -sqrtf(2.f * gravity * jumpHeight);
-		//row = 1;
 	}
-
-	velocity.y += gravity * deltaTime;
-
+	else if (Keyboard::isKeyPressed(Keyboard::S)) direction = DOWN;
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		velocity.x -= speed;
@@ -103,21 +101,12 @@ void player::draw(RenderWindow& window)
 
 void player::onCollision(Vector2f direction)
 {
-	if (direction.x < 0.f)
-	{
-		velocity.x = 0.f;
-	}
-	else if (direction.x > 0.f)
-	{
-		velocity.x = 0.f;
-	}
+	if (direction.x < 0.f) velocity.x = 0.f;
+	else if (direction.x > 0.f) velocity.x = 0.f;
 	if (direction.y < 0.f)
 	{
 		velocity.y = 0.f;
 		canJump = true;
 	}
-	else if (direction.y > 0.f)
-	{
-		velocity.y = 0.f;
-	}
+	else if (direction.y > 0.f) velocity.y = 0.f;
 }

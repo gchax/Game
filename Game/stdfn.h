@@ -6,6 +6,7 @@
 #include <SFML\Window.hpp>
 #include <iostream>
 #include <ctime>
+#include <fstream>
 #include <random>
 #include <string>
 #include "random.h"
@@ -14,8 +15,9 @@ using namespace std;
 using namespace sf;
 
 enum directions { IDLE = 0, UP, DOWN, RIGHT, LEFT };
-enum states { MENU = 0, HOME, OUTDOOR, SKY, CASTLE, STORE, PAUSE, GAME_OVER, SCORE, TUTORIAL, CREDIT };
-enum click { UNSELECTED = 0, BOUGHT, BYE };
+enum states { MENU = 0, INPUT, INTRO, HOME, OUTDOOR, SKY, CASTLE, STORE, PAUSE, GAME_OVER, SCORE, TUTORIAL, CREDIT };
+enum click_states { UNSELECTED = 0, BOUGHT, BYE };
+enum boss_phases { STILL = 0, AGGROVATED, PISSED, INFURIATED, MURDEROUS };
 
 //define global variables;
 static float viewWidght = 1920.f;

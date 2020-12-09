@@ -32,8 +32,7 @@ public:
 private:
 	animation animation;
 	unsigned int row;
-
 	Vector2f velocity;
 	bool canJump = false;
-	float jumpHeight = 150.f;
+	float jumpHeight = 200.f;
 };

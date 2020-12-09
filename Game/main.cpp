@@ -27,114 +27,139 @@ int main()
 	Vector2f windowSize(static_cast<float>(ws.x), static_cast<float>(ws.y));
 
 
-	//initialize font;
-	Font font;
-	font.loadFromFile("8BitDragon.ttf");
-
-
 	//initialize variables;
-	int state = CASTLE;
-	bool isHurt = false;
 	bool isPause = false;
-	bool isSpawned = false;
 	bool isPlayerDead = false;
 	bool isUnlocked = false;
+	bool isEnd = false;
+	bool isRestarted = false;
+	bool isScrolled = false;
 	bool collisionCheat = false;
 	bool gravityCheat = false;
 	bool unlimitedManaCheat = false;
 	bool unlimitedHealthCheat = false;
-	bool useHpPotion = false;
-	bool useMpPotion = false;
+	int state = MENU;
+	int bossPhase = STILL;
+	int buttonState = UNSELECTED;
 	int wandLevel = 0;
 	int key = 0;
 	int playerScore = 0;
 	int playerMoney = 0;
 	int hpPotion = 0;
 	int mpPotion = 0;
+	int pattern = 0;
+	int page = 1;
 	float maxhp = maxHP;
 	float maxmp = maxMP;
 	float playerHP = maxhp;
 	float playerMP = maxmp;
 	float playerGravity = gravity;
 
-	//initialize textures;
+	//load from files;
+	Font font;
+	font.loadFromFile("Resources/Font/8BitDragon.ttf");
+
 	Texture HPP;
-	HPP.loadFromFile("hpp.jpg");
+	HPP.loadFromFile("Resources/Pics/hpp.jpg");
 
 	Texture MPP;
-	MPP.loadFromFile("mpp.jpg");
+	MPP.loadFromFile("Resources/Pics/mpp.jpg");
 
 	Texture jack;
-	jack.loadFromFile("jack.png");
+	jack.loadFromFile("Resources/Pics/jack.png");
 
 	Texture menubg;
-	menubg.loadFromFile("jab.jpg");
+	menubg.loadFromFile("Resources/Pics/menu.jpg");
 
 	Texture jacklogo;
-	jacklogo.loadFromFile("logo.png");
+	jacklogo.loadFromFile("Resources/Pics/logo.png");
 
 	Texture homebg;
-	homebg.loadFromFile("map_home.png");
+	homebg.loadFromFile("Resources/Pics/map_home.png");
 
 	Texture outdoorbg;
-	outdoorbg.loadFromFile("map_outdoor.png");
+	outdoorbg.loadFromFile("Resources/Pics/map_outdoor.png");
 
 	Texture skybg;
-	skybg.loadFromFile("map_sky.png");
+	skybg.loadFromFile("Resources/Pics/map_sky.png");
 
 	Texture mapCastle;
-	mapCastle.loadFromFile("map_castle.png");
+	mapCastle.loadFromFile("Resources/Pics/map_castle.png");
 
 	Texture storebg;
-	storebg.loadFromFile("shopbg.jpg");
+	storebg.loadFromFile("Resources/Pics/shopbg.jpg");
 
 	Texture textbox;
-	textbox.loadFromFile("textbox.png");
+	textbox.loadFromFile("Resources/Pics/textbox.png");
 
 	Texture awand;
-	awand.loadFromFile("sparkle.png");
+	awand.loadFromFile("Resources/Pics/sparkle.png");
 
 	Texture coins;
-	coins.loadFromFile("coin.png");
+	coins.loadFromFile("Resources/Pics/coin.png");
 
 	Texture fireball;
-	fireball.loadFromFile("fireball.png");
+	fireball.loadFromFile("Resources/Pics/fireball.png");
 
 	Texture hp;
-	hp.loadFromFile("hp.png");
+	hp.loadFromFile("Resources/Pics/hp.png");
 
 	Texture mp;
-	mp.loadFromFile("mp.png");
+	mp.loadFromFile("Resources/Pics/mp.png");
 
 	Texture keys;
-	keys.loadFromFile("key.png");
+	keys.loadFromFile("Resources/Pics/key.png");
 
 	Texture gargoyle1;
-	gargoyle1.loadFromFile("gargoyle1.png");
+	gargoyle1.loadFromFile("Resources/Pics/gargoyle1.png");
 
 	Texture gargoyle1Ball;
-	gargoyle1Ball.loadFromFile("ballg1.png");
+	gargoyle1Ball.loadFromFile("Resources/Pics/ballg1.png");
 
 	Texture gargoyle2;
-	gargoyle2.loadFromFile("gargoyle2.png");
+	gargoyle2.loadFromFile("Resources/Pics/gargoyle2.png");
 
 	Texture gargoyle2Ball;
-	gargoyle2Ball.loadFromFile("ballg2.png");
+	gargoyle2Ball.loadFromFile("Resources/Pics/ballg2.png");
 
 	Texture titan1;
-	titan1.loadFromFile("titan1.png");
+	titan1.loadFromFile("Resources/Pics/titan1.png");
 
 	Texture titan2;
-	titan2.loadFromFile("titan2.png");
+	titan2.loadFromFile("Resources/Pics/titan2.png");
 
 	Texture titan2Ball;
-	titan2Ball.loadFromFile("ballt2.png");
+	titan2Ball.loadFromFile("Resources/Pics/ballt2.png");
 
 	Texture monSeller;
-	monSeller.loadFromFile("mon_seller.png");
+	monSeller.loadFromFile("Resources/Pics/mon_seller.png");
 
+	Texture minion1;
+	minion1.loadFromFile("Resources/Pics/minion.png");
+	
 	Texture theboss;
-	theboss.loadFromFile("boss.png");
+	theboss.loadFromFile("Resources/Pics/boss.png");
+
+	Texture torch;
+	torch.loadFromFile("Resources/Pics/torch.png");
+
+	Texture chndlir;
+	chndlir.loadFromFile("Resources/Pics/chandelier.png");
+
+	Texture speeech;
+	speeech.loadFromFile("Resources/Pics/speech.png");
+
+	Texture pg1;
+	pg1.loadFromFile("Resources/Pics/page1.png");
+
+	Texture pg2;
+	pg2.loadFromFile("Resources/Pics/page2.png");
+
+	Texture pg3;
+	pg3.loadFromFile("Resources/Pics/page3.png");
+
+	Texture pg4;
+	pg4.loadFromFile("Resources/Pics/page4.png");
 
 
 	//initialize player;
@@ -143,13 +168,13 @@ int main()
 
 	//declare delta time;
 	float deltaTime = 0.0f;
-	Clock clock[10];
+	Clock clock[15];
 
 
 	//initialzie map variables;
 	platform background(&menubg, Vector2f(windowSize), Vector2f(windowSize / 2.f));
 
-	platform logo(&jacklogo, Vector2f(621.f, 252.f), Vector2f(windowSize.x / 2.f, windowSize.y / 3.f));
+	platform logo(&jacklogo, Vector2f(750.f, 750.f), Vector2f(windowSize.x / 2.f, windowSize.y / 3.25f));
 
 	platform background1(&homebg, Vector2f(1800.0f, 2070.0f), Vector2f(900.0f, 1035.f));
 	vector<bitmap> blockH;
@@ -198,7 +223,7 @@ int main()
 	{
 		{1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},
 		{1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},
-		{0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1},
+		{0,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  1,  1,  1,  2,  2,  2,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1},
 		{2,  2,  2,  2,  2,  2,  2,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2},
 		{2,  2,  2,  2,  2,  2,  2,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2},
 		{2,  2,  2,  2,  2,  2,  2,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2},
@@ -264,7 +289,8 @@ int main()
 	}
 
 	platform background3(&skybg, Vector2f(7920.0f, 2640.0f), Vector2f(3960.0f, 1320.0f));
-	vector<bitmap> blockS;
+	vector<bitmap> blockS0;
+	vector<bitmap> blockS2;
 	int sky[22][66] =
 	{
 		{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
@@ -283,10 +309,10 @@ int main()
 		{0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  0},
 		{0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  0},
 		{0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  0,  0},
-		{0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0},
-		{0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0},
-		{0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0},
-		{0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  1,  0,  0,  0},
+		{0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0},
+		{0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0},
+		{0,  0,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0},
+		{0,  0,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  1,  0,  0,  0},
 		{0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0},
 		{0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0}
 	};
@@ -297,19 +323,48 @@ int main()
 			if (sky[mapY][mapX] == 0)
 			{
 				bitmap sky(nullptr, Vector2f(((mapX) * 120) + 60, ((mapY) * 120) + 60), Vector2f(120.f, 120.f));
-				blockS.push_back(sky);
+				blockS0.push_back(sky);
+			}
+		}
+		for (int mapY = 0; mapY < 22; mapY++)
+		{
+			if (sky[mapY][mapX] == 2)
+			{
+				bitmap sky(nullptr, Vector2f(((mapX) * 120) + 60, ((mapY) * 120) + 60), Vector2f(120.f, 120.f));
+				blockS2.push_back(sky);
 			}
 		}
 	}
 
-	platform castle(&mapCastle, Vector2f(5242.72f, 1080.0f), Vector2f(0.f, -50.f));
-	vector<platform> platforms;
-	platforms.push_back(platform(nullptr, Vector2f(5242.72f, 1.f), Vector2f(0.f, 400.f)));
+	platform castle(&mapCastle, Vector2f(5242.72f, 1080.0f), Vector2f(0.f, -100.f));
+	platform wall1(nullptr, Vector2f(100.f, 2000.f), Vector2f(0.f, 0.f));
+	wall1.body.setPosition(Vector2f(-windowSize.x / 2.f - wall1.body.getSize().x / 2.f, 0.f));
+	platform wall2(nullptr, Vector2f(100.f, 2000.f), Vector2f(0.f, 0.f));
+	wall2.body.setPosition(Vector2f(windowSize.x / 2.f + wall1.body.getSize().x / 2.f, 0.f));
+	vector<platform> ground;
+	ground.push_back(platform(nullptr, Vector2f(5242.72f, 1.f), Vector2f(0.f, 450.f)));
+	vector<platform> torch1;
+	torch1.push_back(platform(nullptr, Vector2f(70.f, 1.f), Vector2f(700.f, 285.f)));
+	platform wallTorch1(&torch, Vector2f(92.f, 200.f), Vector2f(700.f, 250.f));
+	vector<platform> torch2;
+	torch2.push_back(platform(nullptr, Vector2f(70.f, 1.f), Vector2f(450.f, 115.f)));
+	platform wallTorch2(&torch, Vector2f(92.f, 200.f), Vector2f(450.f, 80.f));
+	vector<platform> torch3;
+	torch3.push_back(platform(nullptr, Vector2f(70.f, 1.f), Vector2f(700.f, -55.f)));
+	platform wallTorch3(&torch, Vector2f(92.f, 200.f), Vector2f(700.f, -90.f));
+	vector<platform> Chandelier;
+	Chandelier.push_back(platform(nullptr, Vector2f(350.f, 1.f), Vector2f(350.f, -215.f)));
+	platform chandelier(&chndlir, Vector2f(390.f, 400.f), Vector2f(350.f, -380.f));
 
 	platform store(&storebg, Vector2f(1920.f, 1080.f), Vector2f(960.f, 540.f));
 	store.body.setFillColor(Color(150, 150, 150, 150));
 
-	platform box2(&textbox, Vector2f(1700.f, 380.f), Vector2f(windowSize.x / 2.f, 7.f * windowSize.y / 10.f));
+	platform speech(&speeech, Vector2f(1500.f, 1000.f),Vector2f(windowSize.x / 2.f, windowSize.y + 380.f));
+
+	platform page1(&pg1, Vector2f(windowSize.y, windowSize.y), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
+	platform page2(&pg2, Vector2f(windowSize.y, windowSize.y), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
+	platform page3(&pg3, Vector2f(windowSize.y, windowSize.y), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
+	platform page4(&pg4, Vector2f(windowSize.y, windowSize.y), Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
 
 
 	//initialize warpers;
@@ -328,73 +383,16 @@ int main()
 	warperO[1].setSize(Vector2f(480.f, 120.f));
 
 	RectangleShape warperS[3];
-	warperS[0].setPosition(Vector2f(1200.f, 2345.f));
+	warperS[0].setPosition(Vector2f(1200.f, 2225.f));
 	warperS[0].setSize(Vector2f(240.f, 10.f));
 	warperS[1].setPosition(Vector2f(840.f, 1000.f));
 	warperS[1].setSize(Vector2f(120.f, 10.f));
 	warperS[2].setPosition(Vector2f(5420.f, 1800.f));
 	warperS[2].setSize(Vector2f(210.f, 10.f));
 
-
-	//initialize button variables;
-	button startGame(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 45, "START", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	startGame.setTextOutlineColor(Color::Black);
-	startGame.setTextOutlineThickness(2);
-	button score(Vector2f(windowSize.x / 2.f, 4.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 45, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	score.setTextOutlineColor(Color::Black);
-	score.setTextOutlineThickness(2);
-	button tutorial(Vector2f(windowSize.x / 2.f, 5.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 45, "TUTORIAL", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	tutorial.setTextOutlineColor(Color::Black);
-	tutorial.setTextOutlineThickness(2);
-	button credit(Vector2f(windowSize.x / 2.f, 5.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 45, "CREDITS", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	credit.setTextOutlineColor(Color::Black);
-	credit.setTextOutlineThickness(2);
-	button exitGame(Vector2f(windowSize.x / 2.f, 6.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 45, "EXIT", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	exitGame.setTextOutlineColor(Color::Black);
-	exitGame.setTextOutlineThickness(2);
-
-	string what_do_you_want[5] = { "How shall I serve thee, master?","What is it that you desire?","What is the purpose of thy presence?","Want some power-ups?","Ye shall only find good stuff here" };
-	string bought[3] = { "Thank you, kind sir!\n    Anything else?", "Anything else?", "  Good choice!\nAnything else?" };
-	int buttonState = UNSELECTED;
-	button welcomeText(Vector2f(box2.body.getPosition().x, box2.body.getPosition().y + 15.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 55, what_do_you_want[rand() % 5], Color::Black, Color::Black, Color::Black);
-	button smallPotion(Vector2f(windowSize.x / 2.f, 2.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		1.f, &font, 35, "Small Potion                                  25", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button mediumPotion(Vector2f(windowSize.x / 2.f, 3.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		1.f, &font, 35, "Medium Potion                                  50", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button greaterPotion(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		1.f, &font, 35, "Greater Potion                                100", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button manaPotion(Vector2f(windowSize.x / 2.f, 5.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		1.f, &font, 35, "Mana Potion                                  35", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button mehWand(Vector2f(windowSize.x / 2.f, 6.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		1.f, &font, 35, "Kinda Good Wand                                700", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button betterWand(Vector2f(windowSize.x / 2.f, 7.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		1.f, &font, 35, "OP Wand                              2000", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button done(Vector2f(windowSize.x / 2.f, 8.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		1.f, &font, 35, "Done.", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button thxText(Vector2f(box2.body.getPosition().x, box2.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 150.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
-		2.f, &font, 55, bought[rand() % 3], Color::Black, Color::Black, Color::Black);
-	button byeText(Vector2f(box2.body.getPosition().x, box2.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 75.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
-		2.f, &font, 45, "Gladly looking forward to seeing you again, kind sir.", Color::Black, Color::Black, Color::Black);
-	button returnToTheGame(Vector2f(box2.body.getPosition().x + 555.f, box2.body.getPosition().y + 100.f), Vector2f(windowSize.x / 2.f, 50.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 20, "Return to the game.", Color::Black, Color(69, 69, 69, 255), Color(200, 200, 200, 255));
-
-	button gameOver(Vector2f(windowSize.x / 2.f, 2.5f * windowSize.y / 6.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 150, "GAME OVER", Color::Red, Color::Red, Color::Red);
-	button scoreState(Vector2f(windowSize.x / 2.f, 3.5f * windowSize.y / 6.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 25, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button returnToMenu(Vector2f(windowSize.x / 2.f, 9.f * windowSize.y / 10.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 25, "RETURN TO THE MENU", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-
-	button resume(Vector2f(windowSize.x / 2.f, 2.5f * windowSize.y / 6.f), Vector2f(500.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 150, "RESUME", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
-	button toMenu(Vector2f(windowSize.x / 2.f, 1.f * windowSize.y / 10.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-		2.f, &font, 25, "RESTART AND RETURN TO MENU", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+	RectangleShape skull;
+	skull.setPosition(Vector2f(-600.f, 225.f));
+	skull.setSize(Vector2f(120.f, 200.f));
 
 
 	//initialize items;
@@ -436,7 +434,7 @@ int main()
 		gargoyle1Array.push_back(normalGargoyle);
 		normalGargoyle.body.setPosition(generateIntRandom(500, 1500), generateIntRandom(2300, 700));
 	}
-	projectile gargoyle1Bullet(&gargoyle1Ball, 1000.f, 30.f);
+	projectile gargoyle1Bullet(&gargoyle1Ball, 800.f, 5.f);
 	vector<projectile>::const_iterator gargoyle1BulletIter;
 	vector<projectile> gargoyle1BulletArray;
 
@@ -453,7 +451,7 @@ int main()
 		gargoyle2Array.push_back(advancedGargoyle);
 		advancedGargoyle.body.setPosition(generateIntRandom(500, 1600), generateIntRandom(2300, 700));
 	}
-	projectile gargoyle2Bullet(&gargoyle2Ball, 1000.f, 30.f);
+	projectile gargoyle2Bullet(&gargoyle2Ball, 1000.f, 20.f);
 	vector<projectile>::const_iterator gargoyle2BulletIter;
 	vector<projectile> gargoyle2BulletArray;
 
@@ -465,6 +463,7 @@ int main()
 		titan1Array.push_back(normalTitan);
 		normalTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
 	}
+
 	enemy advancedTitan(&titan2, Vector2u(3, 4), Vector2f(304.f, 400.f), Vector2f(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f)), 0.5f, 280.f, 5000.f, 70);
 	vector<enemy>::const_iterator titan2Iter;
 	vector<enemy> titan2Array;
@@ -473,16 +472,28 @@ int main()
 		titan2Array.push_back(advancedTitan);
 		advancedTitan.body.setPosition(generateIntRandom(2200, 2500.f), generateIntRandom(1150, 900.f));
 	}
-	projectile titan2Bullet(&titan2Ball, 1000.f, 30.f);
+	projectile titan2Bullet(&titan2Ball, 1200.f, 50.f);
 	vector<projectile>::const_iterator titan2BulletIter;
 	vector<projectile> titan2BulletArray;
 
 	enemy seller(&monSeller, Vector2u(2, 1), Vector2f(33.f * 16, 49.f * 16), Vector2f(windowSize.x / 2.f + 432.f, windowSize.y / 2.f - 50.f), 0.8, 0.f, 0.f, 0);
 
-	enemy boss(&theboss, Vector2u(2, 3), Vector2f(850.f, 800.f), Vector2f(0.f, 0.f), 1.f, 1, 1000000, 300);
+	enemy minion(&minion1, Vector2u(5, 2), Vector2f(3 * 96 / 2, 3 * 64 / 2), Vector2f(generateIntRandom(120, 80), generateIntRandom(120, -100)), 0.03f, 300.f, 6000, 20);
+	vector<enemy>::const_iterator minionIter;
+	vector<enemy> minionArray;
+	projectile laser(&gargoyle2Ball, 1200.f, 15.f);
+	vector<projectile>::const_iterator laserIter;
+	vector<projectile> laserArray;
+
+	enemy boss(&theboss, Vector2u(2, 4), Vector2f(850.f, 900.f), Vector2f(-550.f, 50.f), 1.f, 1, 200000, 300);
+	projectile bossBullet(&fireball, 1200.f, 100.f);
+	vector<projectile>::const_iterator bossBulletIter;
+	vector<projectile> bossBulletArray;
 
 	int entityValue = 0;
 
+
+	//texts;
 	textDisplay moneyDp(Color::Yellow);
 	moneyDp.text.setFont(font);
 	vector<textDisplay>::const_iterator moneyIter;
@@ -517,7 +528,7 @@ int main()
 		if (deltaTime > 1.f / 20.f) deltaTime = 1.f / 20.f;
 
 		//initialize time variables;
-		Time elapse[10];
+		Time elapse[15];
 		elapse[0] = clock[0].getElapsedTime();
 		elapse[1] = clock[1].getElapsedTime();
 		elapse[2] = clock[2].getElapsedTime();
@@ -528,14 +539,106 @@ int main()
 		elapse[7] = clock[7].getElapsedTime();
 		elapse[8] = clock[8].getElapsedTime();
 		elapse[9] = clock[9].getElapsedTime();
+		elapse[10] = clock[10].getElapsedTime();
+		elapse[11] = clock[11].getElapsedTime();
+		elapse[12] = clock[12].getElapsedTime();
+		elapse[13] = clock[13].getElapsedTime();
+		elapse[14] = clock[14].getElapsedTime();
 
-		//set window event;
+		//initialize window event;
 		Event event;
-		while (window.pollEvent(event)) if (event.type == Event::Closed) window.close();
 
 		//check coordinate;
 		Vector2i pos = Mouse::getPosition(window);
 		Vector2f mousePos(static_cast<float>(pos.x), static_cast<float>(pos.y));
+
+		//textbox;
+		platform box(&textbox, Vector2f(680.f, 152.f), Vector2f(player.body.getPosition().x + 10.f, player.body.getPosition().y + windowSize.y / 2.f - 200.f));
+		platform winBox(&textbox, Vector2f(680.f, 152.f), Vector2f(0.f, windowSize.y / 2.f - 200.f));
+		platform storeBox(&textbox, Vector2f(1700.f, 380.f), Vector2f(windowSize.x / 2.f, 7.f * windowSize.y / 10.f));
+		
+		//buttons;
+		button startGame(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 45, "START", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		startGame.setTextOutlineColor(Color::Black);
+		startGame.setTextOutlineThickness(3);
+		button score(Vector2f(windowSize.x / 2.f, 4.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 45, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		score.setTextOutlineColor(Color::Black);
+		score.setTextOutlineThickness(3);
+		button tutorial(Vector2f(windowSize.x / 2.f, 5.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 45, "TUTORIAL", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		tutorial.setTextOutlineColor(Color::Black);
+		tutorial.setTextOutlineThickness(3);
+		button credit(Vector2f(windowSize.x / 2.f, 5.5f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 45, "CREDITS", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		credit.setTextOutlineColor(Color::Black);
+		credit.setTextOutlineThickness(3);
+		button exitGame(Vector2f(windowSize.x / 2.f, 6.f * windowSize.y / 7.f), Vector2f(300.f, 45.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 45, "EXIT", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		exitGame.setTextOutlineColor(Color::Black);
+		exitGame.setTextOutlineThickness(3);
+
+		button pickItUp(Vector2f(box.body.getPosition().x, box.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, "PRESS 'SPACE' TO PICK UP THE ITEM.", Color::Black, Color::Black, Color::Black);
+
+		button toSky(Vector2f(box.body.getPosition().x, box.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, "PRESS 'ENTER' TO GO UP TO THE SKY.", Color::Black, Color::Black, Color::Black);
+
+		button toBean(Vector2f(box.body.getPosition().x, box.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, "PRESS 'ENTER' TO GO DOWN THE BEANSTALK.", Color::Black, Color::Black, Color::Black);
+		string findKey;
+		if (key != 5) findKey = ("FIND " + to_string(5 - key) + " MORE KEYS TO OPEN.");
+		else findKey = "PRESS 'ENTER' TO ENTER THE CASTLE.";
+		button unlock(Vector2f(box.body.getPosition().x, box.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, findKey, Color::Black, Color::Black, Color::Black);
+
+		button welcomeText(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 55, "What is it that you desire?", Color::Black, Color::Black, Color::Black);
+		button healthPotion(Vector2f(windowSize.x / 2.f, 2.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			1.f, &font, 35, "Health Potion                                  60", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		healthPotion.setTextOutlineThickness(1);
+		button manaPotion(Vector2f(windowSize.x / 2.f, 3.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			1.f, &font, 35, "Mana Potion                                  25", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		manaPotion.setTextOutlineThickness(1);
+		button wandUpgrade(Vector2f(windowSize.x / 2.f, 4.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			1.f, &font, 35, "Upgrade Wand                                500", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		wandUpgrade.setTextOutlineThickness(1);
+		button moreMaxHP(Vector2f(windowSize.x / 2.f, 5.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			1.f, &font, 35, "Increase Maximun HP                              1000", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		moreMaxHP.setTextOutlineThickness(1);
+		button moreMaxMP(Vector2f(windowSize.x / 2.f, 6.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			1.f, &font, 35, "Increase Maximun MP                                200", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		moreMaxMP.setTextOutlineThickness(1);
+		button done(Vector2f(windowSize.x / 2.f, 8.f * windowSize.y / 15.f), Vector2f(windowSize.x, 70.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			1.f, &font, 35, "Done.", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		button thxText(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 150.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
+			2.f, &font, 55, "Anything else?", Color::Black, Color::Black, Color::Black);
+		button byeText(Vector2f(storeBox.body.getPosition().x, storeBox.body.getPosition().y + 15.f), Vector2f(4.f * windowSize.x / 5.f, 75.f), Color(186, 186, 186), Color(186, 186, 186), Color(186, 186, 186),
+			2.f, &font, 45, "Gladly looking forward to seeing you again, kind sir.", Color::Black, Color::Black, Color::Black);
+		button returnToTheGame(Vector2f(storeBox.body.getPosition().x + 555.f, storeBox.body.getPosition().y + 100.f), Vector2f(windowSize.x / 2.f, 50.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 20, "Return to the game.", Color::Black, Color(69, 69, 69, 255), Color(200, 200, 200, 255));
+
+		button win(Vector2f(winBox.body.getPosition().x, winBox.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, "PRESS 'ENTER' TO CONTINUE.", Color::Black, Color::Black, Color::Black);
+
+		button gameOver(Vector2f(windowSize.x / 2.f, 2.5f * windowSize.y / 6.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 150, "GAME OVER", Color::Red, Color::Red, Color::Red);
+		button scoreState(Vector2f(windowSize.x / 2.f, 3.5f * windowSize.y / 6.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, "LEADERBOARD", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		button returnToMenu(Vector2f(windowSize.x / 2.f, 9.f * windowSize.y / 10.f), Vector2f(300.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, "RETURN TO MENU", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+
+		button resume(Vector2f(windowSize.x / 2.f, 2.5f * windowSize.y / 6.f), Vector2f(500.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 150, "RESUME", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+		button toMenu(Vector2f(windowSize.x / 2.f, 9.f * windowSize.y / 10.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 25, "RESTART AND RETURN TO MENU", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+
+		button ending(Vector2f(windowSize.x - 150.f, 11.f * windowSize.y / 12.f), Vector2f(windowSize.x, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
+			2.f, &font, 20, "Return To Menu", Color::White, Color(150, 150, 150, 255), Color(80, 80, 80, 255));
+
+		if (state == CREDIT || state == SCORE || state == TUTORIAL) background.body.setFillColor(Color(150, 150, 150, 111));
+		else background.body.setFillColor(Color(255, 255, 255, 255));
 
 		//player variables;
 		Vector2f playerPosition = player.body.getPosition();
@@ -548,9 +651,10 @@ int main()
 		if (playerMoney < 0) playerMoney = 0;
 		if (wandLevel >= 60) wandLevel = 60;
 		player.gravity = playerGravity;
-		playerGUI gui(&font, &HPP, &MPP, player.hp, maxhp, player.mp, maxmp, hpPotion, mpPotion, player.money, playerScore, wandLevel, key);
+		hpp.gravity = playerGravity;
+		mpp.gravity = playerGravity;
+		playerGUI gui(&font, &HPP, &MPP, player.hp, maxhp, player.mp, maxmp, hpPotion, mpPotion, player.money, playerScore, wandLevel, key, boss.hp);
 		float atkSpd = 0.4f - wandLevel / 600.f;
-		cout << "x = " << playerPosition.x << "\ty = " << playerPosition.y << endl;
 
 		//loop counters;
 		int gargoyle1Counter = 0;
@@ -560,6 +664,9 @@ int main()
 		int titan1Counter = 0;
 		int titan2Counter = 0;
 		int titan2BulletCounter = 0;
+		int minionCounter = 0;
+		int laserCounter = 0;
+		int bossBulletCounter = 0;
 		int bulletCounter = 0;
 		int coinCounter = 0;
 		int hppCounter = 0;
@@ -577,20 +684,49 @@ int main()
 		int titan1Value = generateIntRandom(10, 80);
 		int titan2Value = generateIntRandom(10, 150);
 
-		//textbox;
-		string findKey;
-		if (key != 5) findKey = ("FIND " + to_string(5 - key) + " MORE KEYS TO OPEN.");
-		else findKey = "PRESS 'ENTER' TO ENTER.";
-		platform box1(&textbox, Vector2f(680.f, 152.f), Vector2f(playerPosition.x + 10.f, playerPosition.y + 300.f));
-		button pickItUp(Vector2f(box1.body.getPosition().x, box1.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-			2.f, &font, 25, "PRESS 'SPACE' TO PICK UP THE ITEM.", Color::Black, Color::Black, Color::Black);
-		platform door(&textbox, Vector2f(680.f, 152.f), Vector2f(playerPosition.x + 10.f, playerPosition.y + 300.f));
-		button unlock(Vector2f(box1.body.getPosition().x, box1.body.getPosition().y + 10.f), Vector2f(windowSize.x - 200.f, 90.f), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0),
-			2.f, &font, 25, findKey, Color::Black, Color::Black, Color::Black);
-
 		//menu//
 		if (state == MENU)
 		{
+			//set window event;
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed) window.close();
+
+				//start game;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && startGame.getGlobalBounds().contains(mousePos))
+				{
+					window.clear();
+					state = INTRO;
+					page = 1;
+				}
+
+				//see scores;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && score.getGlobalBounds().contains(mousePos))
+				{
+					window.clear();
+					state = SCORE;
+				}
+
+				//tutorial;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && tutorial.getGlobalBounds().contains(mousePos))
+				{
+					window.clear();
+					state = TUTORIAL;
+				}
+
+				//credits;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && credit.getGlobalBounds().contains(mousePos))
+				{
+					window.clear();
+					state = CREDIT;
+					isScrolled = true;
+					speech.body.setPosition(windowSize.x / 2.f, windowSize.y + 380.f);
+				}
+
+				//exit game;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && exitGame.getGlobalBounds().contains(mousePos)) window.close();
+			}
+
 			//update buttons;
 			startGame.update(mousePos);
 			score.update(mousePos);
@@ -604,51 +740,6 @@ int main()
 			//clear screen;
 			window.clear();
 			window.setView(view);
-
-			//start game;
-			if (startGame.getGlobalBounds().contains(mousePos))
-			{
-				if (sf::Mouse::isButtonPressed(Mouse::Left))
-				{
-					window.clear();
-					player.body.setPosition(Vector2f(1125.0f, 595.0f));
-					player.setAnimationRow(4);
-					state = HOME;
-				}
-			}
-
-			//see scores;
-			if (score.getGlobalBounds().contains(mousePos))
-			{
-				if (sf::Mouse::isButtonPressed(Mouse::Left))
-				{
-					window.clear();
-					state = SCORE;
-				}
-			}
-
-			//tutorial;
-			if (tutorial.getGlobalBounds().contains(mousePos))
-			{
-				if (sf::Mouse::isButtonPressed(Mouse::Left))
-				{
-					window.clear();
-					state = TUTORIAL;
-				}
-			}
-
-			//credits;
-			if (credit.getGlobalBounds().contains(mousePos))
-			{
-				if (sf::Mouse::isButtonPressed(Mouse::Left))
-				{
-					window.clear();
-					state = CREDIT;
-				}
-			}
-
-			//exit game;
-			if (exitGame.getGlobalBounds().contains(mousePos)) if (Mouse::isButtonPressed(Mouse::Left)) window.close();
 
 			//draw background;
 			background.draw(window);
@@ -664,9 +755,52 @@ int main()
 			exitGame.draw(window);
 		}
 
-		//the game;
-		if (!isPause && state == HOME || !isPause && state == OUTDOOR || !isPause && state == SKY || !isPause && state == CASTLE || !isPause && state == STORE)
+		//input;
+		if (state == INPUT)
 		{
+			//set window event;
+			while (window.pollEvent(event)) if (event.type == Event::Closed) window.close();
+
+		}
+
+		//the game//
+		if (!isPause && state == INTRO || !isPause && state == HOME || !isPause && state == OUTDOOR || !isPause && state == SKY || !isPause && state == CASTLE || !isPause && state == STORE)
+		{
+			//intro//
+			if (state == INTRO)
+			{
+				//set window event;
+				while (window.pollEvent(event))
+				{
+					if (event.type == Event::Closed) window.close();
+
+					//page up;
+					if (event.type == sf::Event::KeyPressed)
+					{
+						if (page < 4) page++; //page up;
+						else if (page == 4 && event.key.code == Keyboard::Space) //start game;
+						{
+							window.clear();
+							player.body.setPosition(Vector2f(1125.0f, 595.0f));
+							player.setAnimationRow(4);
+							state = HOME;
+						}
+					}
+				}
+
+				//set view;
+				view.setCenter(windowSize / 2.f);
+
+				//clear screen;
+				window.clear();
+				window.setView(view);
+
+				if (page == 1) page1.draw(window);
+				else if (page == 2) page2.draw(window);
+				else if (page == 3) page3.draw(window);
+				else if (page == 4) page4.draw(window);
+			}
+
 			//stage 1//
 			if (state == HOME)
 			{
@@ -697,17 +831,15 @@ int main()
 					wand.draw(window);
 					if (player.body.getGlobalBounds().intersects(pickUp.getGlobalBounds()))
 					{
-						box1.draw(window);
+						box.draw(window);
 						pickItUp.update(mousePos);
 						pickItUp.draw(window);
+						if (Keyboard::isKeyPressed(Keyboard::Space)) wandLevel = 1;
 					}
 				}
 
 				//draw player;
 				player.draw(window);
-
-				//wand discovery;
-				if (player.body.getGlobalBounds().intersects(pickUp.getGlobalBounds())) if (Keyboard::isKeyPressed(Keyboard::Space)) wandLevel = 1;
 
 				//go outside;
 				if (player.body.getGlobalBounds().intersects(warperH.getGlobalBounds()))
@@ -747,7 +879,7 @@ int main()
 				background2.draw(window);
 
 				//draw items;
-				coinCounter = 0;
+				coinCounter = 0; //coins;
 				for (coinIter = coinArray.begin();coinIter != coinArray.end();coinIter++)
 				{
 					coinArray[coinCounter].update(deltaTime);
@@ -760,7 +892,7 @@ int main()
 					}
 					coinCounter++;
 				}
-				hppCounter = 0;
+				hppCounter = 0; //health potions;
 				for (hppIter = hppArray.begin();hppIter != hppArray.end();hppIter++)
 				{
 					hppArray[hppCounter].update(deltaTime);
@@ -773,7 +905,7 @@ int main()
 					}
 					hppCounter++;
 				}
-				mppCounter = 0;
+				mppCounter = 0; //mana potions;
 				for (mppIter = mppArray.begin();mppIter != mppArray.end();mppIter++)
 				{
 					mppArray[mppCounter].update(deltaTime);
@@ -786,7 +918,7 @@ int main()
 					}
 					mppCounter++;
 				}
-				keyCounter = 0;
+				keyCounter = 0; //keys;
 				for (keyIter = keyArray.begin();keyIter != keyArray.end();keyIter++)
 				{
 					keyArray[keyCounter].update(deltaTime);
@@ -851,12 +983,12 @@ int main()
 					{
 						coin.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y);
 						coinArray.push_back(coin);
-						if (chance(24) == 0)
+						if (chance(29) == 0)
 						{
 							hpp.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y);
 							hppArray.push_back(hpp);
 						}
-						if (chance(19) == 0)
+						if (chance(24) == 0)
 						{
 							mpp.body.setPosition(generateIntRandom(480, 840), gargoyle1Array[gargoyle1Counter].body.getPosition().y);
 							mppArray.push_back(mpp);
@@ -872,6 +1004,29 @@ int main()
 						break;
 					}
 					gargoyle1Counter++;
+				}
+				gargoyle1BulletCounter = 0; //gargoyle1's bullets hit player;
+				for (gargoyle1BulletIter = gargoyle1BulletArray.begin(); gargoyle1BulletIter != gargoyle1BulletArray.end();gargoyle1BulletIter++)
+				{
+					if (gargoyle1BulletArray[gargoyle1BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						player.hurt();
+						int damage = gargoyle1BulletArray[gargoyle1BulletCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						playerHP -= gargoyle1Bullet.damage;
+						gargoyle1BulletArray.erase(gargoyle1BulletIter);
+						break;
+					}
+					gargoyle1BulletCounter++;
+				}
+				gargoyle1BulletCounter = 0; //draw gargoyle1's bullets;
+				for (gargoyle1BulletIter = gargoyle1BulletArray.begin(); gargoyle1BulletIter != gargoyle1BulletArray.end();gargoyle1BulletIter++)
+				{
+					gargoyle1BulletArray[gargoyle1BulletCounter].update(deltaTime);
+					window.draw(gargoyle1BulletArray[gargoyle1BulletCounter].body);
+					gargoyle1BulletCounter++;
 				}
 				gargoyle1Counter = 0; //draw gargoyle1;
 				for (gargoyle1Iter = gargoyle1Array.begin();gargoyle1Iter != gargoyle1Array.end();gargoyle1Iter++)
@@ -953,7 +1108,30 @@ int main()
 					}
 					gargoyle2Counter++;
 				}
-				gargoyle2Counter = 0; //draw gargoyle1;
+				gargoyle2BulletCounter = 0; //gargoyle2's bullets hit player;
+				for (gargoyle2BulletIter = gargoyle2BulletArray.begin(); gargoyle2BulletIter != gargoyle2BulletArray.end();gargoyle2BulletIter++)
+				{
+					if (gargoyle2BulletArray[gargoyle2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						player.hurt();
+						int damage = gargoyle2BulletArray[gargoyle2BulletCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						playerHP -= damage;
+						gargoyle2BulletArray.erase(gargoyle2BulletIter);
+						break;
+					}
+					gargoyle2BulletCounter++;
+				}
+				gargoyle2BulletCounter = 0; //draw gargoyle2's bullets;
+				for (gargoyle2BulletIter = gargoyle2BulletArray.begin(); gargoyle2BulletIter != gargoyle2BulletArray.end();gargoyle2BulletIter++)
+				{
+					gargoyle2BulletArray[gargoyle2BulletCounter].update(deltaTime);
+					window.draw(gargoyle2BulletArray[gargoyle2BulletCounter].body);
+					gargoyle2BulletCounter++;
+				}
+				gargoyle2Counter = 0; //draw gargoyle2;
 				for (gargoyle2Iter = gargoyle2Array.begin();gargoyle2Iter != gargoyle2Array.end();gargoyle2Iter++)
 				{
 					gargoyle2Array[gargoyle2Counter].updateFly(deltaTime);
@@ -974,9 +1152,16 @@ int main()
 				//go up to the sky;
 				if (player.body.getGlobalBounds().intersects(warperO[1].getGlobalBounds()))
 				{
-					window.clear();
-					player.body.setPosition(Vector2f(1320.0f, 2280.0f));
-					state = SKY;
+					box.draw(window);
+					toSky.update(mousePos);
+					toSky.draw(window);
+					if (Keyboard::isKeyPressed(Keyboard::Return))
+					{
+						window.clear();
+						player.setAnimationRow(2);
+						player.body.setPosition(Vector2f(1320.0f, 2160.0f));
+						state = SKY;
+					}
 				}
 			}
 
@@ -992,7 +1177,7 @@ int main()
 				player.update(deltaTime);
 
 				//map collision;
-				for (int i = 0; i < blockS.size(); i++) if (!collisionCheat) blockS[i].getCollider().checkCollider(playerCollision, 1.0f);
+				for (int i = 0; i < blockS0.size(); i++) if (!collisionCheat) blockS0[i].getCollider().checkCollider(playerCollision, 1.0f);
 
 				//set view;
 				view.setCenter(playerPosition);
@@ -1005,7 +1190,7 @@ int main()
 				background3.draw(window);
 
 				//draw items;
-				coinCounter = 0;
+				coinCounter = 0; //coins;
 				for (coinIter = coinArray.begin();coinIter != coinArray.end();coinIter++)
 				{
 					coinArray[coinCounter].update(deltaTime);
@@ -1018,7 +1203,7 @@ int main()
 					}
 					coinCounter++;
 				}
-				hppCounter = 0;
+				hppCounter = 0; //health potions;
 				for (hppIter = hppArray.begin();hppIter != hppArray.end();hppIter++)
 				{
 					hppArray[hppCounter].update(deltaTime);
@@ -1031,7 +1216,7 @@ int main()
 					}
 					hppCounter++;
 				}
-				mppCounter = 0;
+				mppCounter = 0; //mana potions;
 				for (mppIter = mppArray.begin();mppIter != mppArray.end();mppIter++)
 				{
 					mppArray[mppCounter].update(deltaTime);
@@ -1044,7 +1229,7 @@ int main()
 					}
 					mppCounter++;
 				}
-				keyCounter = 0;
+				keyCounter = 0; //keys;
 				for (keyIter = keyArray.begin();keyIter != keyArray.end();keyIter++)
 				{
 					keyArray[keyCounter].update(deltaTime);
@@ -1069,7 +1254,8 @@ int main()
 				for (titan1Iter = titan1Array.begin();titan1Iter != titan1Array.end();titan1Iter++)
 				{
 					collider titan1Collision = titan1Array[titan1Counter].getCollider();
-					for (int i = 0; i < blockS.size(); i++) blockS[i].getCollider().checkCollider(titan1Collision, 1.0f);
+					for (int i = 0; i < blockS0.size(); i++) blockS0[i].getCollider().checkCollider(titan1Collision, 1.0f);
+					for (int i = 0; i < blockS2.size(); i++) blockS2[i].getCollider().checkCollider(titan1Collision, 1.0f);
 
 					if (player.body.getGlobalBounds().intersects(titan1Array[titan1Counter].body.getGlobalBounds()))
 					{
@@ -1147,7 +1333,8 @@ int main()
 				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
 				{
 					collider titan2Collision = titan2Array[titan2Counter].getCollider();
-					for (int i = 0; i < blockS.size(); i++) blockS[i].getCollider().checkCollider(titan2Collision, 1.0f);
+					for (int i = 0; i < blockS0.size(); i++) blockS0[i].getCollider().checkCollider(titan2Collision, 1.0f);
+					for (int i = 0; i < blockS2.size(); i++) blockS2[i].getCollider().checkCollider(titan2Collision, 1.0f);
 
 					if (player.body.getGlobalBounds().intersects(titan2Array[titan2Counter].body.getGlobalBounds()))
 					{
@@ -1246,6 +1433,29 @@ int main()
 					}
 					titan2Counter++;
 				}
+				titan2BulletCounter = 0; //titan2's bullets hit player;
+				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
+				{
+					if (titan2BulletArray[titan2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						player.hurt();
+						int damage = titan2BulletArray[titan2BulletCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						playerHP -= damage;
+						titan2BulletArray.erase(titan2BulletIter);
+						break;
+					}
+					titan2BulletCounter++;
+				}
+				titan2BulletCounter = 0; //draw titan2's bullets;
+				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
+				{
+					titan2BulletArray[titan2BulletCounter].update(deltaTime);
+					window.draw(titan2BulletArray[titan2BulletCounter].body);
+					titan2BulletCounter++;
+				}
 				titan2Counter = 0; //draw titan2;
 				for (titan2Iter = titan2Array.begin();titan2Iter != titan2Array.end();titan2Iter++)
 				{
@@ -1259,9 +1469,15 @@ int main()
 				//go down the beanstalk;
 				if (player.body.getGlobalBounds().intersects(warperS[0].getGlobalBounds()))
 				{
-					window.clear();
-					player.body.setPosition(Vector2f(1100.0f, 555.0f));
-					state = OUTDOOR;
+					box.draw(window);
+					toBean.update(mousePos);
+					toBean.draw(window);
+					if (Keyboard::isKeyPressed(Keyboard::Return))
+					{
+						window.clear();
+						player.body.setPosition(Vector2f(1100.0f, 555.0f));
+						state = OUTDOOR;
+					}
 				}
 
 				//go into the store;
@@ -1280,20 +1496,20 @@ int main()
 					if (isUnlocked)
 					{
 						window.clear();
-						player.body.setPosition(Vector2f(-700.f, 350.f));
+						player.body.setPosition(Vector2f(700.f, 400.f));
 						player.setAnimationRow(6);
 						state = CASTLE;
 					}
 					if (!isUnlocked)
 					{
-						door.draw(window);
+						box.draw(window);
 						unlock.update(mousePos);
 						unlock.draw(window);
 					}
 				}
 			}
 
-			//stage 4;
+			//stage 4//
 			if (state == CASTLE)
 			{
 				//update GUI;
@@ -1302,31 +1518,565 @@ int main()
 				//update entities;
 				if (!gravityCheat) player.updateBossFight(deltaTime);
 				else player.update(deltaTime);
-				boss.updateStill(deltaTime);
+				boss.updateBoss(deltaTime, bossPhase);
 
-				//initialize ground;
+				if (player.body.getGlobalBounds().intersects(boss.body.getGlobalBounds()) && !boss.isDead)
+				{
+					player.hurt();
+					if (elapse[1].asSeconds() >= 0.5f)
+					{
+						clock[1].restart();
+						int damage = boss.damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						if (!unlimitedHealthCheat) playerHP -= damage;
+					}
+				}
+
+				//initialize collider;
 				Vector2f direction;
-				for (int i = 0; i < platforms.size(); i++) platform& platform = platforms[i];
-				for (platform& platform : platforms) if (!gravityCheat) if (platform.getCollider().checkGroundCollision(player.getCollider(), direction, 1.f)) player.onCollision(direction);
+				for (int i = 0; i < ground.size(); i++) platform& platform = ground[i];
+				for (platform& platform : ground) if (!gravityCheat) if (platform.getCollider().checkGroundCollision(playerCollision, direction, 1.f)) player.onCollision(direction);
+				for (int i = 0; i < torch1.size(); i++) platform& platform = torch1[i];
+				for (platform& platform : torch1) if (!gravityCheat) if (platform.getCollider().checkGroundCollision(playerCollision, direction, 1.f)) player.onCollision(direction);
+				for (int i = 0; i < torch2.size(); i++) platform& platform = torch2[i];
+				for (platform& platform : torch2) if (!gravityCheat) if (platform.getCollider().checkGroundCollision(playerCollision, direction, 1.f)) player.onCollision(direction);
+				for (int i = 0; i < torch3.size(); i++) platform& platform = torch3[i];
+				for (platform& platform : torch3) if (!gravityCheat) if (platform.getCollider().checkGroundCollision(playerCollision, direction, 1.f)) player.onCollision(direction);
+				for (int i = 0; i < Chandelier.size(); i++) platform& platform = Chandelier[i];
+				for (platform& platform : Chandelier) if (!gravityCheat) if (platform.getCollider().checkGroundCollision(playerCollision, direction, 1.f)) player.onCollision(direction);
+
+				hppCounter = 0;
+				for (hppIter = hppArray.begin();hppIter != hppArray.end();hppIter++)
+				{
+					collider hpPotionCollision = hppArray[hppCounter].getCollider();
+					for (int i = 0; i < ground.size(); i++) platform& platform = ground[i];
+					for (platform& platform : ground) if (platform.getCollider().checkGroundCollision(hpPotionCollision, direction, 1.f)) hppArray[hppCounter].onCollision(direction);
+					for (int i = 0; i < torch1.size(); i++) platform& platform = torch1[i];
+					for (platform& platform : torch1) if (platform.getCollider().checkGroundCollision(hpPotionCollision, direction, 1.f)) hppArray[hppCounter].onCollision(direction);
+					for (int i = 0; i < torch2.size(); i++) platform& platform = torch2[i];
+					for (platform& platform : torch2) if (platform.getCollider().checkGroundCollision(hpPotionCollision, direction, 1.f)) hppArray[hppCounter].onCollision(direction);
+					for (int i = 0; i < torch3.size(); i++) platform& platform = torch3[i];
+					for (platform& platform : torch3) if (platform.getCollider().checkGroundCollision(hpPotionCollision, direction, 1.f)) hppArray[hppCounter].onCollision(direction);
+					for (int i = 0; i < Chandelier.size(); i++) platform& platform = Chandelier[i];
+					for (platform& platform : Chandelier) if (platform.getCollider().checkGroundCollision(hpPotionCollision, direction, 1.f)) hppArray[hppCounter].onCollision(direction);
+					hppCounter++;
+				}
+
+				mppCounter = 0;
+				for (mppIter = mppArray.begin();mppIter != mppArray.end();mppIter++)
+				{
+					collider mpPotionCollision = mppArray[mppCounter].getCollider();
+					for (int i = 0; i < ground.size(); i++) platform& platform = ground[i];
+					for (platform& platform : ground) if (platform.getCollider().checkGroundCollision(mpPotionCollision, direction, 1.f)) mppArray[mppCounter].onCollision(direction);
+					for (int i = 0; i < torch1.size(); i++) platform& platform = torch1[i];
+					for (platform& platform : torch1) if (platform.getCollider().checkGroundCollision(mpPotionCollision, direction, 1.f)) mppArray[mppCounter].onCollision(direction);
+					for (int i = 0; i < torch2.size(); i++) platform& platform = torch2[i];
+					for (platform& platform : torch2) if (platform.getCollider().checkGroundCollision(mpPotionCollision, direction, 1.f)) mppArray[mppCounter].onCollision(direction);
+					for (int i = 0; i < torch3.size(); i++) platform& platform = torch3[i];
+					for (platform& platform : torch3) if (platform.getCollider().checkGroundCollision(mpPotionCollision, direction, 1.f)) mppArray[mppCounter].onCollision(direction);
+					for (int i = 0; i < Chandelier.size(); i++) platform& platform = Chandelier[i];
+					for (platform& platform : Chandelier) if (platform.getCollider().checkGroundCollision(mpPotionCollision, direction, 1.f)) mppArray[mppCounter].onCollision(direction);
+					mppCounter++;
+				}
+
+				collider leftScreen = wall1.getCollider();
+				collider rightScreen = wall2.getCollider();
+				leftScreen.checkCollider(playerCollision, 1.f);
+				rightScreen.checkCollider(playerCollision, 1.f);
 
 				//set view;
 				view.setCenter(0.f, 0.f);
 
 				//claer screen;
-				window.clear();
+				window.clear(Color(32, 48, 32));
 				window.setView(view);
 
 				//draw background;
 				castle.draw(window);
+				wallTorch1.draw(window);
+				wallTorch2.draw(window);
+				wallTorch3.draw(window);
+				chandelier.draw(window);
+
+				//draw items;
+				hppCounter = 0; //health potions;
+				for (hppIter = hppArray.begin();hppIter != hppArray.end();hppIter++)
+				{
+					hppArray[hppCounter].updateGravity(deltaTime);
+					window.draw(hppArray[hppCounter].body);
+					hppArray[hppCounter].lifetime++;
+					if (hppArray[hppCounter].lifetime >= 500)
+					{
+						hppArray[hppCounter].lifetime = 0;
+						hppArray[hppCounter].destroy = true;
+					}
+					hppCounter++;
+				}
+				mppCounter = 0; //mana potions;
+				for (mppIter = mppArray.begin();mppIter != mppArray.end();mppIter++)
+				{
+					mppArray[mppCounter].updateGravity(deltaTime);
+					window.draw(mppArray[mppCounter].body);
+					mppArray[mppCounter].lifetime++;
+					if (mppArray[mppCounter].lifetime >= 500)
+					{
+						mppArray[mppCounter].lifetime = 0;
+						mppArray[mppCounter].destroy = true;
+					}
+					mppCounter++;
+				}
+
+				if (boss.hp > 100000 && boss.hp < 199400) bossPhase = PISSED;
+				else if (boss.hp > 50000 && boss.hp <= 100000) bossPhase = INFURIATED;
+				else if (boss.hp > 0 && boss.hp <= 50000) bossPhase = MURDEROUS;
+				if (bossPhase == AGGROVATED)
+				{
+					if (minion.isSpawned[0]) //spawn minion;
+					{
+						minion.isSpawned[0] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+				}
+				if (bossPhase == PISSED)
+				{
+					if (minion.isSpawned[1]) //spawn minion;
+					{
+						minion.isSpawned[1] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[2] && boss.hp <= 180000) //spawn minion;
+					{
+						minion.isSpawned[2] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[3] && boss.hp <= 160000) //spawn minion;
+					{
+						minion.isSpawned[3] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[4] && boss.hp <= 140000) //spawn minion;
+					{
+						minion.isSpawned[4] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[5] && boss.hp <= 120000) //spawn minion;
+					{
+						minion.isSpawned[5] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[6] && boss.hp <= 100001) //spawn minion;
+					{
+						minion.isSpawned[6] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+				}
+				if (bossPhase == INFURIATED)
+				{
+					if (elapse[13].asSeconds() >= 1.2f)
+					{
+						pattern++;
+						if (pattern > 3) pattern = 1;
+						clock[13].restart();
+						if (playerPosition.x > boss.body.getPosition().x)
+						{
+							bossBullet.direction = RIGHT;
+							if (pattern == 1)
+							{
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (3.f * boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (boss.body.getSize().y / 4.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+							}
+							if (pattern == 2)
+							{
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y);
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y + (boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+							}
+							if (pattern == 3)
+							{
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y + (boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y + (boss.body.getSize().y / 4.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y + (3.f * boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+							}
+						}
+					}
+				}
+				if (bossPhase == MURDEROUS)
+				{
+					if (elapse[14].asSeconds() >= 1.2f)
+					{
+						pattern++;
+						if (pattern > 2) pattern = 1;
+						clock[14].restart();
+						if (playerPosition.x > boss.body.getPosition().x)
+						{
+							bossBullet.direction = RIGHT;
+							if (pattern == 1)
+							{
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (boss.body.getSize().y / 2.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (3.f * boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (boss.body.getSize().y / 4.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - (boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y);
+								bossBulletArray.push_back(bossBullet);
+							}
+							if (pattern == 2)
+							{
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y + (3.f * boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y + (boss.body.getSize().y / 4.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y + (boss.body.getSize().y / 8.f));
+								bossBulletArray.push_back(bossBullet);
+								bossBullet.body.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y);
+								bossBulletArray.push_back(bossBullet);
+							}
+						}
+					}
+					if (minion.isSpawned[7]) //spawn minion;
+					{
+						minion.isSpawned[7] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[8] && boss.hp <= 40000) //spawn minion;
+					{
+						minion.isSpawned[8] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[9] && boss.hp <= 30000) //spawn minion;
+					{
+						minion.isSpawned[9] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[10] && boss.hp <= 20000) //spawn minion;
+					{
+						minion.isSpawned[10] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[11] && boss.hp <= 15000) //spawn minion;
+					{
+						minion.isSpawned[11] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[12] && boss.hp <= 10000) //spawn minion;
+					{
+						minion.isSpawned[12] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[13] && boss.hp <= 5000) //spawn minion;
+					{
+						minion.isSpawned[13] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+					if (minion.isSpawned[14] && boss.hp <= 2500) //spawn minion;
+					{
+						minion.isSpawned[14] = false;
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+						minion.body.setPosition(generateIntRandom(120, 80), generateIntRandom(120, -100));
+						minionArray.push_back(minion);
+					}
+				}
+				if (boss.isDead) //boss die;
+				{
+					minionArray.clear();
+					bossPhase = IDLE;
+					if (player.body.getGlobalBounds().intersects(skull.getGlobalBounds()))
+					{
+						winBox.draw(window);
+						win.update(mousePos);
+						win.draw(window);
+						if (Keyboard::isKeyPressed(Keyboard::Return)) isEnd = true;
+					}
+				}
 
 				//draw entities;
-				player.draw(window);
 				boss.draw(window);
+				player.draw(window);
+
+				bossBulletCounter = 0; //boss' bullets hit player;
+				for (bossBulletIter = bossBulletArray.begin(); bossBulletIter != bossBulletArray.end();bossBulletIter++)
+				{
+					if (bossBulletArray[bossBulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						player.hurt();
+						int damage = bossBulletArray[bossBulletCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						if (!unlimitedHealthCheat) playerHP -= laser.damage;
+						bossBulletArray.erase(bossBulletIter);
+						break;
+					}
+					bossBulletCounter++;
+				}
+				bossBulletCounter = 0; //draw boss' bullets;
+				for (bossBulletIter = bossBulletArray.begin(); bossBulletIter != bossBulletArray.end();bossBulletIter++)
+				{
+					bossBulletArray[bossBulletCounter].update(deltaTime);
+					window.draw(bossBulletArray[bossBulletCounter].body);
+					bossBulletCounter++;
+				}
+
+				minionCounter = 0; //minion hit;
+				for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++)
+				{
+					collider minionCollision = minionArray[minionCounter].getCollider();
+					leftScreen.checkCollider(minionCollision, 1.0f);
+					rightScreen.checkCollider(minionCollision, 1.0f);
+
+					if (player.body.getGlobalBounds().intersects(minionArray[minionCounter].body.getGlobalBounds()))
+					{
+						player.hurt();
+						if (elapse[1].asSeconds() >= 0.5f)
+						{
+							clock[1].restart();
+							int damage = minionArray[minionCounter].damage;
+							dmgDp.text.setString("-" + to_string(damage));
+							dmgDp.text.setPosition(playerPosition);
+							dmgArray.push_back(dmgDp);
+							if (!unlimitedHealthCheat) playerHP -= damage;
+						}
+					}
+					minionCounter++;
+				}
+				minionCounter = 0; //minion	attack;
+				for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++)
+				{
+					minionArray[minionCounter].action = generateIntRandom(2, 1);
+					if (elapse[3].asSeconds() >= 0.02f)
+					{
+						clock[3].restart();
+						minionArray[minionCounter].updateAggrovated(deltaTime, playerPosition);
+					}
+					if (minionArray[minionCounter].action >= 2)
+					{
+						if (elapse[4].asSeconds() >= 0.5f)
+						{
+							clock[4].restart();
+							if (playerPosition.x < minionArray[minionCounter].body.getPosition().x && abs(playerPosition.y - minionArray[minionCounter].body.getPosition().y) <= 40)
+							{
+								laser.direction = LEFT;
+								laser.body.setPosition(minionArray[minionCounter].body.getPosition());
+								laserArray.push_back(laser);
+								minionArray[minionCounter].direction = LEFT;
+							}
+							if (playerPosition.x > minionArray[minionCounter].body.getPosition().x && abs(playerPosition.y - minionArray[minionCounter].body.getPosition().y) <= 40)
+							{
+								laser.direction = RIGHT;
+								laser.body.setPosition(minionArray[minionCounter].body.getPosition());
+								laserArray.push_back(laser);
+								minionArray[minionCounter].direction = RIGHT;
+							}
+							if (playerPosition.y < minionArray[minionCounter].body.getPosition().y && abs(playerPosition.x - minionArray[minionCounter].body.getPosition().x) <= 40)
+							{
+								laser.direction = UP;
+								laser.body.setPosition(minionArray[minionCounter].body.getPosition());
+								laserArray.push_back(laser);
+								minionArray[minionCounter].direction = UP;
+							}
+							if (playerPosition.y > minionArray[minionCounter].body.getPosition().y && abs(playerPosition.x - minionArray[minionCounter].body.getPosition().x) <= 40)
+							{
+								laser.direction = DOWN;
+								laser.body.setPosition(minionArray[minionCounter].body.getPosition());
+								laserArray.push_back(laser);
+								minionArray[minionCounter].direction = DOWN;
+							}
+						}
+					}
+					minionCounter++;
+				}
+				minionCounter = 0; //minion die;
+				for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++)
+				{
+					if (minionArray[minionCounter].isDead)
+					{
+						if (chance(3) == 0)
+						{
+							hpp.body.setPosition(minionArray[minionCounter].body.getPosition().x + 25.f, minionArray[minionCounter].body.getPosition().y);
+							hppArray.push_back(hpp);
+						}
+						if (chance(3) == 0)
+						{
+							mpp.body.setPosition(minionArray[minionCounter].body.getPosition().x - 25.f, minionArray[minionCounter].body.getPosition().y);
+							mppArray.push_back(mpp);
+						}
+						minionArray.erase(minionIter);
+						break;
+					}
+					minionCounter++;
+				}
+				laserCounter = 0; //laser beam hit player;
+				for (laserIter = laserArray.begin(); laserIter != laserArray.end();laserIter++)
+				{
+					if (laserArray[laserCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
+					{
+						player.hurt();
+						int damage = laserArray[laserCounter].damage;
+						dmgDp.text.setString("-" + to_string(damage));
+						dmgDp.text.setPosition(playerPosition);
+						dmgArray.push_back(dmgDp);
+						if (!unlimitedHealthCheat) playerHP -= laser.damage;
+						laserArray.erase(laserIter);
+						break;
+					}
+					laserCounter++;
+				}
+				laserCounter = 0; //draw laser beam;
+				for (laserIter = laserArray.begin(); laserIter != laserArray.end();laserIter++)
+				{
+					laserArray[laserCounter].update(deltaTime);
+					window.draw(laserArray[laserCounter].body);
+					laserCounter++;
+				}
+				minionCounter = 0; //draw minion;
+				for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++)
+				{
+					window.draw(minionArray[minionCounter].body);
+					minionCounter++;
+				}
+
+				//draw boss hp;
+				gui.drawBossHpBar(window);
 			}
 
-			//store;
+			//store//
 			if (state == STORE)
 			{
+				//set window events;
+				while (window.pollEvent(event))
+				{
+					if (event.type == Event::Closed) window.close();
+
+					//get items;
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && healthPotion.getGlobalBounds().contains(mousePos) && playerMoney >= 60)
+					{
+						buttonState = BOUGHT;
+						hpPotion++;
+						playerMoney -= 60;
+					}
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && manaPotion.getGlobalBounds().contains(mousePos) && playerMoney >= 25)
+					{
+						buttonState = BOUGHT;
+						mpPotion++;
+						playerMoney -= 25;
+					}
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && wandUpgrade.getGlobalBounds().contains(mousePos) && playerMoney >= 500)
+					{
+						buttonState = BOUGHT;
+						wandLevel++;
+						playerMoney -= 500;
+					}
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxHP.getGlobalBounds().contains(mousePos) && playerMoney >= 1000)
+					{
+						buttonState = BOUGHT;
+						maxhp += 1000;
+						playerMoney -= 1000;
+					}
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && moreMaxMP.getGlobalBounds().contains(mousePos) && playerMoney >= 200)
+					{
+						buttonState = BOUGHT;
+						maxmp += 100;
+						playerMoney -= 200;
+					}
+
+					//return to the game;
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && done.getGlobalBounds().contains(mousePos)) buttonState = BYE;
+					if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left && returnToTheGame.getGlobalBounds().contains(mousePos))
+					{
+						window.clear();
+						player.body.setPosition(Vector2f(900.f, 1140.f));
+						player.setAnimationRow(2);
+						player.direction = DOWN;
+						state = SKY;
+					}
+				}
+
 				//update GUI;
 				gui.updateCoin(deltaTime, windowSize, playerPosition);
 				gui.updateWandState(deltaTime, windowSize, playerPosition);
@@ -1346,12 +2096,11 @@ int main()
 
 				//update buttons
 				welcomeText.update(mousePos);
-				smallPotion.update(mousePos);
-				mediumPotion.update(mousePos);
-				greaterPotion.update(mousePos);
+				healthPotion.update(mousePos);
 				manaPotion.update(mousePos);
-				mehWand.update(mousePos);
-				betterWand.update(mousePos);
+				wandUpgrade.update(mousePos);
+				moreMaxHP.update(mousePos);
+				moreMaxMP.update(mousePos);
 				done.update(mousePos);
 				thxText.update(mousePos);
 				byeText.update(mousePos);
@@ -1361,109 +2110,64 @@ int main()
 				seller.draw(window);
 
 				//draw platform;
-				box2.draw(window);
+				storeBox.draw(window);
 
 				//draw buttons
 				welcomeText.draw(window);
-				smallPotion.draw(window);
-				mediumPotion.draw(window);
-				greaterPotion.draw(window);
+				healthPotion.draw(window);
 				manaPotion.draw(window);
-				mehWand.draw(window);
-				betterWand.draw(window);
+				wandUpgrade.draw(window);
+				moreMaxHP.draw(window);
+				moreMaxMP.draw(window);
 				done.draw(window);
-
-				if (done.getGlobalBounds().contains(mousePos)) if (sf::Mouse::isButtonPressed(Mouse::Left)) buttonState = BYE;
-				if (buttonState == BYE)
-				{
-					byeText.draw(window);
-					returnToTheGame.draw(window);
-				}
 
 				//draw GUI;
 				gui.drawCoin(window);
 				gui.drawWandState(window);
 
-				//buying potions;
-				if (smallPotion.getGlobalBounds().contains(mousePos))
+				if (buttonState == BOUGHT) thxText.draw(window);
+				if (buttonState == BYE)
 				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						buttonState = BOUGHT;
-						//hpPotion++;
-						playerMoney -= 25;
-					}
-				}
-				if (mediumPotion.getGlobalBounds().contains(mousePos))
-				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						buttonState = BOUGHT;
-						//hpPotion++;
-						playerMoney -= 50;
-					}
-				}
-				if (greaterPotion.getGlobalBounds().contains(mousePos))
-				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						buttonState = BOUGHT;
-						//hpPotion++;
-						playerMoney -= 100;
-					}
-				}
-				if (manaPotion.getGlobalBounds().contains(mousePos))
-				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						buttonState = BOUGHT;
-						//mpPotion++;
-						playerMoney -= 35;
-					}
-				}
-
-				//buying wands;
-				if (mehWand.getGlobalBounds().contains(mousePos))
-				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						buttonState = BOUGHT;
-						wandLevel++;
-						playerMoney -= 500;
-					}
-				}
-
-				if (buttonState == BOUGHT)
-				{
-					thxText.draw(window);
-				}
-
-				//return to the game;
-				if (returnToTheGame.getGlobalBounds().contains(mousePos))
-				{
-					if (sf::Mouse::isButtonPressed(Mouse::Left))
-					{
-						window.clear();
-						player.body.setPosition(Vector2f(900.f, 1140.f));
-						player.setAnimationRow(2);
-						player.direction = DOWN;
-						state = SKY;
-					}
+					byeText.draw(window);
+					returnToTheGame.draw(window);
 				}
 			}
 
-			//events;
+			//events//
 			if (state == HOME || state == OUTDOOR || state == SKY || state == CASTLE)
 			{
+				//set window event;
+				while (window.pollEvent(event))
+				{
+					if (event.type == Event::Closed) window.close();
+
+					//buffs;
+					if (event.type == Event::KeyPressed && event.key.code == Keyboard::Num1 && hpPotion != 0)
+					{
+						hpPotion--;
+						playerHP += 200;
+					}
+					if (event.type == Event::KeyPressed && event.key.code == Keyboard::Num2 && mpPotion != 0)
+					{
+						mpPotion--;
+						playerMP += 50;
+					}
+				}
+
 				//update player's stats
 				playerHP += 0.1f * deltaTime;
-				playerMP += 0.5f * deltaTime;
-				if (player.hp <= 0) isPlayerDead = true;
+				if (playerHP <= 0)
+				{
+					playerHP = 0;
+					isPlayerDead = true;
+				}
+				playerMP += 0.1f * deltaTime;
+				if (playerMP <= 0) playerMP = 0;
 
 				//bullet events;
-				if (wandLevel != 0) //player's bullets;
+				if (wandLevel > 0) //player's bullets;
 				{
-					if (Keyboard::isKeyPressed(Keyboard::Space) && playerMP > 0) //release bullet;
+					if (Keyboard::isKeyPressed(Keyboard::Space) && playerMP >= 3.f) //release bullet;
 					{
 						if (elapse[2].asSeconds() >= atkSpd)
 						{
@@ -1566,9 +2270,44 @@ int main()
 								titan2Counter++;
 							}
 						}
-						if (state == CASTLE && !collisionCheat)
+						if (state == CASTLE)
 						{
+							minionCounter = 0; //minion got hit;
+							for (minionIter = minionArray.begin();minionIter != minionArray.end();minionIter++)
+							{
+								if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(minionArray[minionCounter].body.getGlobalBounds()))
+								{
+									projectileArray[bulletCounter].isCollided = true;
+									int damage = projectileArray[bulletCounter].damage * (wandLevel / 7.f);
+									dmgDp.text.setString("-" + to_string(damage));
+									dmgDp.text.setPosition(minionArray[minionCounter].body.getPosition());
+									dmgArray.push_back(dmgDp);
+									minionArray[minionCounter].hp -= damage;
+									if (minionArray[minionCounter].hp <= 0.f)
+									{
+										minionArray[minionCounter].isDead = true;
+										playerScore += 3000;
+									}
+								}
+								minionCounter++;
+							}
 
+							if (projectileArray[bulletCounter].body.getGlobalBounds().intersects(boss.body.getGlobalBounds()) && !boss.isDead)
+							{
+								projectileArray[bulletCounter].isCollided = true;
+								int damage = projectileArray[bulletCounter].damage * (wandLevel / 10.f);
+								dmgDp.text.setString("-" + to_string(damage));
+								dmgDp.text.setPosition(boss.body.getPosition().x + 150.f, boss.body.getPosition().y - 300.f);
+								dmgArray.push_back(dmgDp);
+								boss.hp -= damage;
+								if (boss.hp <= 0.f)
+								{
+									boss.hp = 0;
+									boss.isDead = true;
+									playerScore += 100000;
+								}
+								if (boss.hp >= 199400) bossPhase = AGGROVATED;
+							}
 						}
 						if (projectileArray[bulletCounter].isCollided) //delete bullets;
 						{
@@ -1586,76 +2325,7 @@ int main()
 					}
 				}
 
-				gargoyle1BulletCounter = 0; //gargoyle1's bullets hit player;
-				for (gargoyle1BulletIter = gargoyle1BulletArray.begin(); gargoyle1BulletIter != gargoyle1BulletArray.end();gargoyle1BulletIter++)
-				{
-					if (gargoyle1BulletArray[gargoyle1BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
-					{
-						int damage = gargoyle1BulletArray[gargoyle1BulletCounter].damage;
-						dmgDp.text.setString("-" + to_string(damage));
-						dmgDp.text.setPosition(playerPosition);
-						dmgArray.push_back(dmgDp);
-						playerHP -= gargoyle1Bullet.damage;
-						gargoyle1BulletArray.erase(gargoyle1BulletIter);
-						break;
-					}
-					gargoyle1BulletCounter++;
-				}
-				gargoyle1BulletCounter = 0; //draw gargoyle1's bullets;
-				for (gargoyle1BulletIter = gargoyle1BulletArray.begin(); gargoyle1BulletIter != gargoyle1BulletArray.end();gargoyle1BulletIter++)
-				{
-					gargoyle1BulletArray[gargoyle1BulletCounter].update(deltaTime);
-					window.draw(gargoyle1BulletArray[gargoyle1BulletCounter].body);
-					gargoyle1BulletCounter++;
-				}
-
-				gargoyle2BulletCounter = 0; //gargoyle2's bullets hit player;
-				for (gargoyle2BulletIter = gargoyle2BulletArray.begin(); gargoyle2BulletIter != gargoyle2BulletArray.end();gargoyle2BulletIter++)
-				{
-					if (gargoyle2BulletArray[gargoyle2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
-					{
-						int damage = gargoyle2BulletArray[gargoyle2BulletCounter].damage;
-						dmgDp.text.setString("-" + to_string(damage));
-						dmgDp.text.setPosition(playerPosition);
-						dmgArray.push_back(dmgDp);
-						playerHP -= gargoyle1Bullet.damage;
-						gargoyle2BulletArray.erase(gargoyle2BulletIter);
-						break;
-					}
-					gargoyle2BulletCounter++;
-				}
-				gargoyle2BulletCounter = 0; //draw gargoyle2's bullets;
-				for (gargoyle2BulletIter = gargoyle2BulletArray.begin(); gargoyle2BulletIter != gargoyle2BulletArray.end();gargoyle2BulletIter++)
-				{
-					gargoyle2BulletArray[gargoyle2BulletCounter].update(deltaTime);
-					window.draw(gargoyle2BulletArray[gargoyle2BulletCounter].body);
-					gargoyle2BulletCounter++;
-				}
-
-				titan2BulletCounter = 0; //titan2's bullets hit player;
-				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
-				{
-					if (titan2BulletArray[titan2BulletCounter].body.getGlobalBounds().intersects(player.body.getGlobalBounds()))
-					{
-						int damage = titan2BulletArray[titan2BulletCounter].damage;
-						dmgDp.text.setString("-" + to_string(damage));
-						dmgDp.text.setPosition(playerPosition);
-						dmgArray.push_back(dmgDp);
-						playerHP -= titan2Bullet.damage;
-						titan2BulletArray.erase(titan2BulletIter);
-						break;
-					}
-					titan2BulletCounter++;
-				}
-				titan2BulletCounter = 0; //draw titan2's bullets;
-				for (titan2BulletIter = titan2BulletArray.begin(); titan2BulletIter != titan2BulletArray.end();titan2BulletIter++)
-				{
-					titan2BulletArray[titan2BulletCounter].update(deltaTime);
-					window.draw(titan2BulletArray[titan2BulletCounter].body);
-					titan2BulletCounter++;
-				}
-
-				//items pick up;
+				//items events;
 				coinCounter = 0; //coins pick up;
 				for (coinIter = coinArray.begin(); coinIter != coinArray.end();coinIter++)
 				{
@@ -1800,18 +2470,6 @@ int main()
 				gui.drawCoin(window);
 				gui.drawWandState(window);
 
-				//buffs;
-				if (Keyboard::isKeyPressed(Keyboard::Num1) && hpPotion != 0)
-				{
-					hpPotion--;
-					playerHP += 200;
-				}
-				if (Keyboard::isKeyPressed(Keyboard::Num2) && mpPotion != 0)
-				{
-					mpPotion--;
-					playerMP += 50;
-				}
-
 				//cheats;
 				if (Keyboard::isKeyPressed(Keyboard::Num1) && Keyboard::isKeyPressed(Keyboard::Home))
 				{
@@ -1882,6 +2540,18 @@ int main()
 		//pause menu//
 		if (isPause)
 		{
+			//set window event;
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed) window.close();
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && resume.getGlobalBounds().contains(mousePos)) isPause = false;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && toMenu.getGlobalBounds().contains(mousePos))
+				{
+					isPause = false;
+					isRestarted = true;
+				}
+			}
+
 			//update buttons;
 			resume.update(mousePos);
 			toMenu.update(mousePos);
@@ -1894,36 +2564,56 @@ int main()
 			//draw buttons;
 			resume.draw(window);
 			toMenu.draw(window);
+		}
 
-			if (resume.getGlobalBounds().contains(mousePos)) if (sf::Mouse::isButtonPressed(Mouse::Left)) isPause = false;
+		//endgame;
+		if (isEnd)
+		{
 
-			//restart;
-			if (toMenu.getGlobalBounds().contains(mousePos))
-			{
-				if (sf::Mouse::isButtonPressed(Mouse::Left))
-				{
-					isPause = false;
-					window.clear();
-					state = MENU;
-					wandLevel = 0;
-					playerScore = 0;
-					playerMoney = 0;
-					playerHP = maxHP;
-					playerMP = maxMP;
-					hpPotion = 0;
-					mpPotion = 0;
-					key = 0;
-				}
-			}
+			window.clear();
+			state = CREDIT;
+			isScrolled = true;
+			speech.body.setPosition(windowSize.x / 2.f, windowSize.y + 380.f);
+		}
+
+		//restart//
+		if (isRestarted)
+		{
+			isRestarted = false;
+			window.clear();
+			state = MENU;
+			isPlayerDead = false;
+			wandLevel = 0;
+			playerScore = 0;
+			playerMoney = 0;
+			playerHP = maxHP;
+			playerMP = maxMP;
+			hpPotion = 0;
+			mpPotion = 0;
+			key = 0;
+			isScrolled = false;
 		}
 
 		//game over//
 		if (state == GAME_OVER)
 		{
-			//restart game;
-			isPlayerDead = false;
+			//set window event;
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed) window.close();
+				
+				//see score;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && scoreState.getGlobalBounds().contains(mousePos))
+				{
+					window.clear();
+					state = SCORE;
+				}
 
-			//set view
+				//return to menu;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && returnToMenu.getGlobalBounds().contains(mousePos)) isRestarted = true;
+			}
+
+			//set view;
 			view.setCenter(windowSize / 2.f);
 
 			//clear screen;
@@ -1935,56 +2625,62 @@ int main()
 			scoreState.update(mousePos);
 			returnToMenu.update(mousePos);
 
-			//see score;
-			if (scoreState.getGlobalBounds().contains(mousePos))
-			{
-				if (sf::Mouse::isButtonPressed(Mouse::Left))
-				{
-					window.clear();
-					state = SCORE;
-				}
-			}
-
-			//return to menu;
-			if (returnToMenu.getGlobalBounds().contains(mousePos))
-			{
-				if (sf::Mouse::isButtonPressed(Mouse::Left))
-				{
-					window.clear();
-					state = MENU;
-					wandLevel = 0;
-					playerScore = 0;
-					playerMoney = 0;
-					playerHP = maxHP;
-					playerMP = maxMP;
-					hpPotion = 0;
-					mpPotion = 0;
-					key = 0;
-				}
-			}
-
 			//draw buttons;
 			gameOver.draw(window);
 			scoreState.draw(window);
 			returnToMenu.draw(window);
 		}
 
-		//view scores;
+		//leaderboard;
 		if (state == SCORE)
 		{
+			//set window event;
+			while (window.pollEvent(event)) if (event.type == Event::Closed) window.close();
+
 			window.clear();
 		}
 
 		//tutorial;
 		if (state == TUTORIAL)
 		{
+			//set window event;
+			while (window.pollEvent(event)) if (event.type == Event::Closed) window.close();
+
 			window.clear();
 		}
 
-		//end game credit;
+		//credit//
 		if (state == CREDIT)
 		{
+			//set window event;
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed) window.close();
+
+				//to menu;
+				if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && ending.getGlobalBounds().contains(mousePos)) isRestarted = true;
+			}
+
+			//update;
+			if (isScrolled)
+			{
+				if (speech.body.getPosition().y > windowSize.y / 2.f) speech.body.move(0.f, -100.f * deltaTime);
+				else isScrolled = false;
+			}
+
+			ending.update(mousePos);
+
+			//set view;
+			view.setCenter(windowSize / 2.f);
+
+			//clear screen;
 			window.clear();
+			window.setView(view);
+
+			//draw;
+			background.draw(window);
+			speech.draw(window);
+			ending.draw(window);
 		}
 
 		//display window//

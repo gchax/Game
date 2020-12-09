@@ -11,6 +11,7 @@ public:
 	bool isCollided = false;
 	bool isDead = false;
 	bool isRespawned = false;
+	bool isSpawned[15] = { true,true,true,true,true,true,true,true,true,true,true,true,true,true,true };
 	bool isAggroed = false;
 	bool shoot = false;
 	int action = 0;
@@ -27,7 +28,7 @@ public:
 	void updateAggroedFly(float deltaTime, Vector2f playerPosition);
 	void updateWalk(float deltaTime);
 	void updateAggrovated(float deltaTime, Vector2f playerPosition);
-	void updateBoss(float deltaTime);
+	void updateBoss(float deltaTime, int bossPhase);
 	void draw(RenderWindow& window);
 
 	collider getCollider() { return collider(body); }
@@ -37,4 +38,5 @@ private:
 	Vector2f size;
 	Vector2f position;
 	unsigned int row = 0;
+	int bossPhase = IDLE;
 };

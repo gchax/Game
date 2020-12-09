@@ -25,10 +25,6 @@ button::button(Vector2f position, Vector2f shapeSize, Color shapeIdleColor, Colo
 	this->text.setOrigin(this->text.getLocalBounds().width / originDenomenator, this->text.getLocalBounds().height / originDenomenator);
 }
 
-button::~button()
-{
-}
-
 void button::update(const Vector2f mousePos)
 {
 	this->buttonState = BTN_IDLE;

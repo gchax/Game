@@ -6,7 +6,7 @@
 class projectile
 {
 public:
-	projectile(Texture* texture, float speed, int attackDamage);
+	projectile(Texture* texture, float speed, int damage);
 
 	int direction = IDLE;
 	bool isCollided = false;

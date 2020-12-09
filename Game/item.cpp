@@ -16,6 +16,24 @@ void item::update(float deltaTime)
 	body.setTextureRect(animation.uvRect);
 }
 
+void item::updateGravity(float deltaTime)
+{
+	velocity.x *= 0.f;
+	velocity.y += gravity * deltaTime;
+
+	animation.update(0, deltaTime);
+	body.setTextureRect(animation.uvRect);
+	body.move(velocity * deltaTime);
+}
+
+void item::onCollision(Vector2f direction)
+{
+	if (direction.x < 0.f) velocity.x = 0.f;
+	else if (direction.x > 0.f) velocity.x = 0.f;
+	if (direction.y < 0.f) velocity.y = 0.f;
+	else if (direction.y > 0.f) velocity.y = 0.f;
+}
+
 void item::draw(RenderWindow& window)
 {
 	window.draw(body);

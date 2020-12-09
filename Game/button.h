@@ -8,9 +8,7 @@ class button
 private:
 	short unsigned buttonState;
 
-	RectangleShape shape;
 	Font* font;
-	Text text;
 
 	Color shapeIdleColor;
 	Color shapeHoverColor;
@@ -22,7 +20,6 @@ private:
 public:
 	button(Vector2f position, Vector2f shapeSize, Color shapeIdleColor, Color shapeHoverColor, Color shapeActiveColor,
 		float originDenomenator, Font* font, float fontSize, string text, Color textIdleColor, Color textHoverColor, Color textActiveColor);
-	~button();
 
 	void update(const Vector2f mousePos);
 	void draw(RenderWindow& window);
@@ -33,7 +30,12 @@ public:
 	void setShapeFillColor(const Color& e) { return shape.setFillColor(e); }
 	void setShapeOutlineColor(const Color& f) { return shape.setOutlineColor(f); }
 	void setShapeOutlineThickness(float g) { return shape.setOutlineThickness(g); }
+	void setPosition(Vector2f(h)) { return shape.setPosition(h); }
+	void move(Vector2f(i)) { return shape.move(i); }
 
 	FloatRect getGlobalBounds() { return shape.getGlobalBounds(); }
 	Vector2f getSize() { return shape.getSize(); }
+	Vector2f getPosition() { return shape.getPosition(); }
+	RectangleShape shape;
+	Text text;
 };
